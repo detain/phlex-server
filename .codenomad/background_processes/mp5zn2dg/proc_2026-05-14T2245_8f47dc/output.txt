@@ -1,0 +1,15 @@
+title:	Step 1.5: WebSocket Server
+state:	MERGED
+author:	detain (Joe Huss)
+labels:	
+assignees:	
+reviewers:	
+projects:	
+milestone:	
+number:	6
+url:	https://github.com/detain/phlex/pull/6
+additions:	637
+deletions:	0
+auto-merge:	disabled
+--
+Implements step 1.5 of the Phlex implementation plan

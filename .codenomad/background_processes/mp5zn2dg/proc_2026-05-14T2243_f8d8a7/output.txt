@@ -1,0 +1,38 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.6
+
+.EE.R                                                               5 / 5 (100%)
+
+Time: 00:00.014, Memory: 10.00 MB
+
+Connection Pool (Phlex\Tests\Unit\Server\WebSocket\ConnectionPool)
+ ✔ Can get instance
+ ✘ Can add and remove connection
+   │
+   │ TypeError: Phlex\Server\WebSocket\ConnectionPool::add(): Argument #1 ($connection) must be of type Phlex\Server\WebSocket\Connection, class@anonymous given, called in /home/sites/phlex/tests/unit/Server/WebSocket/ConnectionPoolTest.php on line 23
+   │
+   │ /home/sites/phlex/src/Server/WebSocket/ConnectionPool.php:18
+   │ /home/sites/phlex/tests/unit/Server/WebSocket/ConnectionPoolTest.php:23
+   │
+ ✘ Can find by user id
+   │
+   │ TypeError: Phlex\Server\WebSocket\ConnectionPool::add(): Argument #1 ($connection) must be of type Phlex\Server\WebSocket\Connection, class@anonymous given, called in /home/sites/phlex/tests/unit/Server/WebSocket/ConnectionPoolTest.php on line 39
+   │
+   │ /home/sites/phlex/src/Server/WebSocket/ConnectionPool.php:18
+   │ /home/sites/phlex/tests/unit/Server/WebSocket/ConnectionPoolTest.php:39
+   │
+
+Message Handler (Phlex\Tests\Unit\Server\WebSocket\MessageHandler)
+ ✔ Can register callback
+ ⚠ Can broadcast
+
+There was 1 risky test:
+
+1) Phlex\Tests\Unit\Server\WebSocket\MessageHandlerTest::testCanBroadcast
+This test did not perform any assertions
+
+/home/sites/phlex/tests/unit/Server/WebSocket/MessageHandlerTest.php:25
+
+ERRORS!
+Tests: 5, Assertions: 2, Errors: 2, Risky: 1.

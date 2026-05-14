@@ -1,0 +1,18 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.6
+
+.....                                                               5 / 5 (100%)
+
+Time: 00:00.009, Memory: 10.00 MB
+
+Connection Pool (Phlex\Tests\Unit\Server\WebSocket\ConnectionPool)
+ ✔ Can get instance
+ ✔ Can add and remove connection
+ ✔ Can find by user id
+
+Message Handler (Phlex\Tests\Unit\Server\WebSocket\MessageHandler)
+ ✔ Can register callback
+ ✔ Can broadcast
+
+OK (5 tests, 8 assertions)

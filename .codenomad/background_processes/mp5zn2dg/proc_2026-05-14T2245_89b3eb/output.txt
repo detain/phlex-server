@@ -1,0 +1,10 @@
+[step-1.5-websocket-server 3836a33] Step 1.5: Implement WebSocket server with message handler
+ 8 files changed, 637 insertions(+)
+ create mode 100644 src/Server/WebSocket/Connection.php
+ create mode 100644 src/Server/WebSocket/ConnectionInterface.php
+ create mode 100644 src/Server/WebSocket/ConnectionPool.php
+ create mode 100644 src/Server/WebSocket/Events.php
+ create mode 100644 src/Server/WebSocket/MessageHandler.php
+ create mode 100644 src/Server/WebSocket/WebSocketServer.php
+ create mode 100644 tests/unit/Server/WebSocket/ConnectionPoolTest.php
+ create mode 100644 tests/unit/Server/WebSocket/MessageHandlerTest.php

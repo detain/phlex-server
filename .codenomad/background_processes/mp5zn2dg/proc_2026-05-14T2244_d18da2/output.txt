@@ -1,0 +1,62 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.6
+
+.................................                                 33 / 33 (100%)
+
+Time: 00:00.036, Memory: 10.00 MB
+
+Application (Phlex\Tests\Unit\Server\Core\Application)
+ ✔ Application can be instantiated
+
+Audit Logger (Phlex\Tests\Unit\Common\Logger\AuditLogger)
+ ✔ Can log login success
+ ✔ Can log login failure
+ ✔ Can log logout
+ ✔ Can log permission denied
+
+Connection Pool (Phlex\Tests\Unit\Common\Database\ConnectionPool)
+ ✔ Connection pool can be initialized
+ ✔ Get instance returns pool instance
+
+Connection Pool (Phlex\Tests\Unit\Server\WebSocket\ConnectionPool)
+ ✔ Can get instance
+ ✔ Can add and remove connection
+ ✔ Can find by user id
+
+Message Handler (Phlex\Tests\Unit\Server\WebSocket\MessageHandler)
+ ✔ Can register callback
+ ✔ Can broadcast
+
+Query Builder (Phlex\Tests\Unit\Common\Database\QueryBuilder)
+ ✔ Can create select query
+ ✔ Can add where clause
+ ✔ Can chain methods
+
+Request (Phlex\Tests\Unit\Server\Http\Request)
+ ✔ Can get bearer token
+ ✔ Get header returns null when not present
+ ✔ Is methods
+ ✔ Get client ip with forwarded header
+
+Response (Phlex\Tests\Unit\Server\Http\Response)
+ ✔ Can create json response
+ ✔ Can chain methods
+ ✔ Can create html response
+ ✔ Can redirect
+ ✔ No content response
+
+Router (Phlex\Tests\Unit\Server\Http\Router)
+ ✔ Can register get route
+ ✔ Can register multiple http methods
+ ✔ Can use path parameters
+ ✔ Returns 404 for unknown route
+
+Structured Logger (Phlex\Tests\Unit\Common\Logger\StructuredLogger)
+ ✔ Logger can be created
+ ✔ Logger can log info message
+ ✔ Logger can log with context
+ ✔ Logger can log errors
+ ✔ Log levels
+
+OK (33 tests, 46 assertions)

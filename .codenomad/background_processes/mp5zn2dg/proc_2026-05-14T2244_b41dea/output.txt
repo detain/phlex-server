@@ -1,0 +1,26 @@
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .codenomad/background_processes/mp5zn2dg/index.json
+	modified:   vendor/bin/.phpunit.result.cache
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.codenomad/background_processes/mp5zn2dg/proc_2026-05-14T2243_2def69/
+	.codenomad/background_processes/mp5zn2dg/proc_2026-05-14T2243_f8d8a7/
+	.codenomad/background_processes/mp5zn2dg/proc_2026-05-14T2244_2d9869/
+	.codenomad/background_processes/mp5zn2dg/proc_2026-05-14T2244_49d95e/
+	.codenomad/background_processes/mp5zn2dg/proc_2026-05-14T2244_b41dea/
+	.codenomad/background_processes/mp5zn2dg/proc_2026-05-14T2244_d18da2/
+	src/Server/WebSocket/Connection.php
+	src/Server/WebSocket/ConnectionInterface.php
+	src/Server/WebSocket/ConnectionPool.php
+	src/Server/WebSocket/Events.php
+	src/Server/WebSocket/MessageHandler.php
+	src/Server/WebSocket/WebSocketServer.php
+	tests/unit/Server/WebSocket/
+
+no changes added to commit (use "git add" and/or "git commit -a")
