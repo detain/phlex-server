@@ -1,1 +1,1 @@
-{"version":2,"defects":[],"times":{"Phlex\\Tests\\Unit\\Server\\Core\\ApplicationTest::testApplicationCanBeInstantiated":0.002}}
+{"version":2,"defects":[],"times":{"Phlex\\Tests\\Unit\\Server\\Core\\ApplicationTest::testApplicationCanBeInstantiated":0.003}}
