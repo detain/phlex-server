@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /home/sites/phlex/src/LiveTv</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/home/sites/phlex/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">LiveTv</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="ChannelManager.php.html#19">Phlex\LiveTv\ChannelManager</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#19">Phlex\LiveTv\GuideManager</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#18">Phlex\LiveTv\LiveTvManager</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#18">Phlex\LiveTv\Recorder</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Recorder.php.html#18">Phlex\LiveTv\Recorder</a></td><td class="text-right">2756</td></tr>
+       <tr><td><a href="ChannelManager.php.html#19">Phlex\LiveTv\ChannelManager</a></td><td class="text-right">2070</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#18">Phlex\LiveTv\LiveTvManager</a></td><td class="text-right">1892</td></tr>
+       <tr><td><a href="GuideManager.php.html#19">Phlex\LiveTv\GuideManager</a></td><td class="text-right">1722</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="ChannelManager.php.html#38"><abbr title="Phlex\LiveTv\ChannelManager::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#50"><abbr title="Phlex\LiveTv\ChannelManager::createChannel">createChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#82"><abbr title="Phlex\LiveTv\ChannelManager::getChannel">getChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#99"><abbr title="Phlex\LiveTv\ChannelManager::getChannelByNumber">getChannelByNumber</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#120"><abbr title="Phlex\LiveTv\ChannelManager::getAllChannels">getAllChannels</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#142"><abbr title="Phlex\LiveTv\ChannelManager::getChannelsByType">getChannelsByType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#160"><abbr title="Phlex\LiveTv\ChannelManager::updateChannel">updateChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#215"><abbr title="Phlex\LiveTv\ChannelManager::deleteChannel">deleteChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#235"><abbr title="Phlex\LiveTv\ChannelManager::hideChannel">hideChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#255"><abbr title="Phlex\LiveTv\ChannelManager::restoreChannel">restoreChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#279"><abbr title="Phlex\LiveTv\ChannelManager::addToFavorites">addToFavorites</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#301"><abbr title="Phlex\LiveTv\ChannelManager::removeFromFavorites">removeFromFavorites</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#316"><abbr title="Phlex\LiveTv\ChannelManager::getFavoriteChannels">getFavoriteChannels</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#337"><abbr title="Phlex\LiveTv\ChannelManager::isFavorite">isFavorite</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#355"><abbr title="Phlex\LiveTv\ChannelManager::createLineup">createLineup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#379"><abbr title="Phlex\LiveTv\ChannelManager::getLineup">getLineup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#399"><abbr title="Phlex\LiveTv\ChannelManager::getUserLineups">getUserLineups</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#412"><abbr title="Phlex\LiveTv\ChannelManager::addChannelToLineup">addChannelToLineup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#427"><abbr title="Phlex\LiveTv\ChannelManager::removeChannelFromLineup">removeChannelFromLineup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#440"><abbr title="Phlex\LiveTv\ChannelManager::getLineupChannels">getLineupChannels</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#461"><abbr title="Phlex\LiveTv\ChannelManager::deleteLineup">deleteLineup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#474"><abbr title="Phlex\LiveTv\ChannelManager::getChannelCount">getChannelCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#487"><abbr title="Phlex\LiveTv\ChannelManager::mapChannel">mapChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ChannelManager.php.html#510"><abbr title="Phlex\LiveTv\ChannelManager::generateUuid">generateUuid</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#45"><abbr title="Phlex\LiveTv\GuideManager::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#54"><abbr title="Phlex\LiveTv\GuideManager::getCurrentProgram">getCurrentProgram</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#75"><abbr title="Phlex\LiveTv\GuideManager::getProgram">getProgram</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#106"><abbr title="Phlex\LiveTv\GuideManager::getProgramsForChannel">getProgramsForChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#136"><abbr title="Phlex\LiveTv\GuideManager::getProgramsForChannels">getProgramsForChannels</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#167"><abbr title="Phlex\LiveTv\GuideManager::searchPrograms">searchPrograms</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#190"><abbr title="Phlex\LiveTv\GuideManager::getProgramsByCategory">getProgramsByCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#211"><abbr title="Phlex\LiveTv\GuideManager::getUpcomingBySeries">getUpcomingBySeries</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#232"><abbr title="Phlex\LiveTv\GuideManager::upsertProgram">upsertProgram</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#289"><abbr title="Phlex\LiveTv\GuideManager::deleteProgram">deleteProgram</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#309"><abbr title="Phlex\LiveTv\GuideManager::cleanupOldPrograms">cleanupOldPrograms</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#331"><abbr title="Phlex\LiveTv\GuideManager::importGuideData">importGuideData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#360"><abbr title="Phlex\LiveTv\GuideManager::exportGuideData">exportGuideData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#380"><abbr title="Phlex\LiveTv\GuideManager::getChannelGuide">getChannelGuide</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#391"><abbr title="Phlex\LiveTv\GuideManager::setCacheTtl">setCacheTtl</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#399"><abbr title="Phlex\LiveTv\GuideManager::clearCache">clearCache</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#408"><abbr title="Phlex\LiveTv\GuideManager::getCacheStats">getCacheStats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#419"><abbr title="Phlex\LiveTv\GuideManager::invalidateCacheForChannel">invalidateCacheForChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#429"><abbr title="Phlex\LiveTv\GuideManager::mapProgram">mapProgram</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="GuideManager.php.html#458"><abbr title="Phlex\LiveTv\GuideManager::generateUuid">generateUuid</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#45"><abbr title="Phlex\LiveTv\LiveTvManager::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#64"><abbr title="Phlex\LiveTv\LiveTvManager::discoverTuners">discoverTuners</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#85"><abbr title="Phlex\LiveTv\LiveTvManager::scanForTuners">scanForTuners</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#121"><abbr title="Phlex\LiveTv\LiveTvManager::detectDvbType">detectDvbType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#130"><abbr title="Phlex\LiveTv\LiveTvManager::getTunerCapabilities">getTunerCapabilities</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#143"><abbr title="Phlex\LiveTv\LiveTvManager::registerTuner">registerTuner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#166"><abbr title="Phlex\LiveTv\LiveTvManager::scanChannels">scanChannels</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#187"><abbr title="Phlex\LiveTv\LiveTvManager::getTuner">getTuner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#200"><abbr title="Phlex\LiveTv\LiveTvManager::getTuners">getTuners</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#208"><abbr title="Phlex\LiveTv\LiveTvManager::updateTunerStatus">updateTunerStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#226"><abbr title="Phlex\LiveTv\LiveTvManager::performChannelScan">performChannelScan</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#258"><abbr title="Phlex\LiveTv\LiveTvManager::scanFrequency">scanFrequency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#271"><abbr title="Phlex\LiveTv\LiveTvManager::tuneToChannel">tuneToChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#311"><abbr title="Phlex\LiveTv\LiveTvManager::findAvailableTuner">findAvailableTuner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#336"><abbr title="Phlex\LiveTv\LiveTvManager::stopTuning">stopTuning</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#353"><abbr title="Phlex\LiveTv\LiveTvManager::getTuneRequest">getTuneRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#361"><abbr title="Phlex\LiveTv\LiveTvManager::getActiveTuneRequests">getActiveTuneRequests</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#369"><abbr title="Phlex\LiveTv\LiveTvManager::getChannelManager">getChannelManager</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#377"><abbr title="Phlex\LiveTv\LiveTvManager::getGuideManager">getGuideManager</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#385"><abbr title="Phlex\LiveTv\LiveTvManager::getRecorder">getRecorder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#393"><abbr title="Phlex\LiveTv\LiveTvManager::generateUuid">generateUuid</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#48"><abbr title="Phlex\LiveTv\Recorder::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#59"><abbr title="Phlex\LiveTv\Recorder::scheduleRecording">scheduleRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#95"><abbr title="Phlex\LiveTv\Recorder::getRecording">getRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#112"><abbr title="Phlex\LiveTv\Recorder::getAllRecordings">getAllRecordings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#136"><abbr title="Phlex\LiveTv\Recorder::getUpcomingRecordings">getUpcomingRecordings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#159"><abbr title="Phlex\LiveTv\Recorder::getRecordingsForChannel">getRecordingsForChannel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#177"><abbr title="Phlex\LiveTv\Recorder::getUserRecordings">getUserRecordings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#195"><abbr title="Phlex\LiveTv\Recorder::startRecording">startRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#225"><abbr title="Phlex\LiveTv\Recorder::stopRecording">stopRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#263"><abbr title="Phlex\LiveTv\Recorder::cancelRecording">cancelRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#284"><abbr title="Phlex\LiveTv\Recorder::deleteRecording">deleteRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#313"><abbr title="Phlex\LiveTv\Recorder::updateRecordingStatus">updateRecordingStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#325"><abbr title="Phlex\LiveTv\Recorder::getRecordingPath">getRecordingPath</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#333"><abbr title="Phlex\LiveTv\Recorder::hasStorageSpace">hasStorageSpace</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#348"><abbr title="Phlex\LiveTv\Recorder::getUsedStorageBytes">getUsedStorageBytes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#362"><abbr title="Phlex\LiveTv\Recorder::getAvailableStorageBytes">getAvailableStorageBytes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#374"><abbr title="Phlex\LiveTv\Recorder::estimateRecordingSize">estimateRecordingSize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#385"><abbr title="Phlex\LiveTv\Recorder::startTimeShift">startTimeShift</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#418"><abbr title="Phlex\LiveTv\Recorder::stopTimeShift">stopTimeShift</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#434"><abbr title="Phlex\LiveTv\Recorder::getTimeShift">getTimeShift</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#442"><abbr title="Phlex\LiveTv\Recorder::getTimeShiftPosition">getTimeShiftPosition</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#454"><abbr title="Phlex\LiveTv\Recorder::seekTimeShift">seekTimeShift</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#473"><abbr title="Phlex\LiveTv\Recorder::getActiveRecordingCount">getActiveRecordingCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#481"><abbr title="Phlex\LiveTv\Recorder::getActiveTimeShiftCount">getActiveTimeShiftCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#489"><abbr title="Phlex\LiveTv\Recorder::getRecordingCountByStatus">getRecordingCountByStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#506"><abbr title="Phlex\LiveTv\Recorder::updatePriority">updatePriority</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#519"><abbr title="Phlex\LiveTv\Recorder::getStorageStats">getStorageStats</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#534"><abbr title="Phlex\LiveTv\Recorder::mapRecording">mapRecording</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Recorder.php.html#561"><abbr title="Phlex\LiveTv\Recorder::generateUuid">generateUuid</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="ChannelManager.php.html#160"><abbr title="Phlex\LiveTv\ChannelManager::updateChannel">updateChannel</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#311"><abbr title="Phlex\LiveTv\LiveTvManager::findAvailableTuner">findAvailableTuner</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="GuideManager.php.html#331"><abbr title="Phlex\LiveTv\GuideManager::importGuideData">importGuideData</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#85"><abbr title="Phlex\LiveTv\LiveTvManager::scanForTuners">scanForTuners</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="ChannelManager.php.html#120"><abbr title="Phlex\LiveTv\ChannelManager::getAllChannels">getAllChannels</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="GuideManager.php.html#136"><abbr title="Phlex\LiveTv\GuideManager::getProgramsForChannels">getProgramsForChannels</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#226"><abbr title="Phlex\LiveTv\LiveTvManager::performChannelScan">performChannelScan</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Recorder.php.html#195"><abbr title="Phlex\LiveTv\Recorder::startRecording">startRecording</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Recorder.php.html#225"><abbr title="Phlex\LiveTv\Recorder::stopRecording">stopRecording</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Recorder.php.html#284"><abbr title="Phlex\LiveTv\Recorder::deleteRecording">deleteRecording</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="GuideManager.php.html#75"><abbr title="Phlex\LiveTv\GuideManager::getProgram">getProgram</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="GuideManager.php.html#106"><abbr title="Phlex\LiveTv\GuideManager::getProgramsForChannel">getProgramsForChannel</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="GuideManager.php.html#429"><abbr title="Phlex\LiveTv\GuideManager::mapProgram">mapProgram</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#187"><abbr title="Phlex\LiveTv\LiveTvManager::getTuner">getTuner</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#208"><abbr title="Phlex\LiveTv\LiveTvManager::updateTunerStatus">updateTunerStatus</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#271"><abbr title="Phlex\LiveTv\LiveTvManager::tuneToChannel">tuneToChannel</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Recorder.php.html#112"><abbr title="Phlex\LiveTv\Recorder::getAllRecordings">getAllRecordings</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Recorder.php.html#263"><abbr title="Phlex\LiveTv\Recorder::cancelRecording">cancelRecording</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="ChannelManager.php.html#82"><abbr title="Phlex\LiveTv\ChannelManager::getChannel">getChannel</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#99"><abbr title="Phlex\LiveTv\ChannelManager::getChannelByNumber">getChannelByNumber</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#142"><abbr title="Phlex\LiveTv\ChannelManager::getChannelsByType">getChannelsByType</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#215"><abbr title="Phlex\LiveTv\ChannelManager::deleteChannel">deleteChannel</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#235"><abbr title="Phlex\LiveTv\ChannelManager::hideChannel">hideChannel</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#255"><abbr title="Phlex\LiveTv\ChannelManager::restoreChannel">restoreChannel</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#279"><abbr title="Phlex\LiveTv\ChannelManager::addToFavorites">addToFavorites</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#316"><abbr title="Phlex\LiveTv\ChannelManager::getFavoriteChannels">getFavoriteChannels</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#355"><abbr title="Phlex\LiveTv\ChannelManager::createLineup">createLineup</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#379"><abbr title="Phlex\LiveTv\ChannelManager::getLineup">getLineup</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ChannelManager.php.html#440"><abbr title="Phlex\LiveTv\ChannelManager::getLineupChannels">getLineupChannels</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#54"><abbr title="Phlex\LiveTv\GuideManager::getCurrentProgram">getCurrentProgram</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#167"><abbr title="Phlex\LiveTv\GuideManager::searchPrograms">searchPrograms</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#190"><abbr title="Phlex\LiveTv\GuideManager::getProgramsByCategory">getProgramsByCategory</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#211"><abbr title="Phlex\LiveTv\GuideManager::getUpcomingBySeries">getUpcomingBySeries</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#289"><abbr title="Phlex\LiveTv\GuideManager::deleteProgram">deleteProgram</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#309"><abbr title="Phlex\LiveTv\GuideManager::cleanupOldPrograms">cleanupOldPrograms</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="GuideManager.php.html#360"><abbr title="Phlex\LiveTv\GuideManager::exportGuideData">exportGuideData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#64"><abbr title="Phlex\LiveTv\LiveTvManager::discoverTuners">discoverTuners</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#166"><abbr title="Phlex\LiveTv\LiveTvManager::scanChannels">scanChannels</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="LiveTvManager.php.html#336"><abbr title="Phlex\LiveTv\LiveTvManager::stopTuning">stopTuning</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#95"><abbr title="Phlex\LiveTv\Recorder::getRecording">getRecording</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#136"><abbr title="Phlex\LiveTv\Recorder::getUpcomingRecordings">getUpcomingRecordings</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#159"><abbr title="Phlex\LiveTv\Recorder::getRecordingsForChannel">getRecordingsForChannel</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#177"><abbr title="Phlex\LiveTv\Recorder::getUserRecordings">getUserRecordings</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#333"><abbr title="Phlex\LiveTv\Recorder::hasStorageSpace">hasStorageSpace</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#362"><abbr title="Phlex\LiveTv\Recorder::getAvailableStorageBytes">getAvailableStorageBytes</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#418"><abbr title="Phlex\LiveTv\Recorder::stopTimeShift">stopTimeShift</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#442"><abbr title="Phlex\LiveTv\Recorder::getTimeShiftPosition">getTimeShiftPosition</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#454"><abbr title="Phlex\LiveTv\Recorder::seekTimeShift">seekTimeShift</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Recorder.php.html#489"><abbr title="Phlex\LiveTv\Recorder::getRecordingCountByStatus">getRecordingCountByStatus</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.3.6</a> and <a href="https://phpunit.de/">PHPUnit 10.5.63</a> at Fri May 15 17:07:12 EDT 2026.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([4,0,0,0,0,0,0,0,0,0,0,0], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([94,0,0,0,0,0,0,0,0,0,0,0], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,45,"<a href=\"ChannelManager.php.html#19\">Phlex\\LiveTv\\ChannelManager<\/a>"],[0,41,"<a href=\"GuideManager.php.html#19\">Phlex\\LiveTv\\GuideManager<\/a>"],[0,43,"<a href=\"LiveTvManager.php.html#18\">Phlex\\LiveTv\\LiveTvManager<\/a>"],[0,52,"<a href=\"Recorder.php.html#18\">Phlex\\LiveTv\\Recorder<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"ChannelManager.php.html#38\">Phlex\\LiveTv\\ChannelManager::__construct<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#50\">Phlex\\LiveTv\\ChannelManager::createChannel<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#82\">Phlex\\LiveTv\\ChannelManager::getChannel<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#99\">Phlex\\LiveTv\\ChannelManager::getChannelByNumber<\/a>"],[0,4,"<a href=\"ChannelManager.php.html#120\">Phlex\\LiveTv\\ChannelManager::getAllChannels<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#142\">Phlex\\LiveTv\\ChannelManager::getChannelsByType<\/a>"],[0,8,"<a href=\"ChannelManager.php.html#160\">Phlex\\LiveTv\\ChannelManager::updateChannel<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#215\">Phlex\\LiveTv\\ChannelManager::deleteChannel<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#235\">Phlex\\LiveTv\\ChannelManager::hideChannel<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#255\">Phlex\\LiveTv\\ChannelManager::restoreChannel<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#279\">Phlex\\LiveTv\\ChannelManager::addToFavorites<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#301\">Phlex\\LiveTv\\ChannelManager::removeFromFavorites<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#316\">Phlex\\LiveTv\\ChannelManager::getFavoriteChannels<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#337\">Phlex\\LiveTv\\ChannelManager::isFavorite<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#355\">Phlex\\LiveTv\\ChannelManager::createLineup<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#379\">Phlex\\LiveTv\\ChannelManager::getLineup<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#399\">Phlex\\LiveTv\\ChannelManager::getUserLineups<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#412\">Phlex\\LiveTv\\ChannelManager::addChannelToLineup<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#427\">Phlex\\LiveTv\\ChannelManager::removeChannelFromLineup<\/a>"],[0,2,"<a href=\"ChannelManager.php.html#440\">Phlex\\LiveTv\\ChannelManager::getLineupChannels<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#461\">Phlex\\LiveTv\\ChannelManager::deleteLineup<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#474\">Phlex\\LiveTv\\ChannelManager::getChannelCount<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#487\">Phlex\\LiveTv\\ChannelManager::mapChannel<\/a>"],[0,1,"<a href=\"ChannelManager.php.html#510\">Phlex\\LiveTv\\ChannelManager::generateUuid<\/a>"],[0,1,"<a href=\"GuideManager.php.html#45\">Phlex\\LiveTv\\GuideManager::__construct<\/a>"],[0,2,"<a href=\"GuideManager.php.html#54\">Phlex\\LiveTv\\GuideManager::getCurrentProgram<\/a>"],[0,3,"<a href=\"GuideManager.php.html#75\">Phlex\\LiveTv\\GuideManager::getProgram<\/a>"],[0,3,"<a href=\"GuideManager.php.html#106\">Phlex\\LiveTv\\GuideManager::getProgramsForChannel<\/a>"],[0,4,"<a href=\"GuideManager.php.html#136\">Phlex\\LiveTv\\GuideManager::getProgramsForChannels<\/a>"],[0,2,"<a href=\"GuideManager.php.html#167\">Phlex\\LiveTv\\GuideManager::searchPrograms<\/a>"],[0,2,"<a href=\"GuideManager.php.html#190\">Phlex\\LiveTv\\GuideManager::getProgramsByCategory<\/a>"],[0,2,"<a href=\"GuideManager.php.html#211\">Phlex\\LiveTv\\GuideManager::getUpcomingBySeries<\/a>"],[0,1,"<a href=\"GuideManager.php.html#232\">Phlex\\LiveTv\\GuideManager::upsertProgram<\/a>"],[0,2,"<a href=\"GuideManager.php.html#289\">Phlex\\LiveTv\\GuideManager::deleteProgram<\/a>"],[0,2,"<a href=\"GuideManager.php.html#309\">Phlex\\LiveTv\\GuideManager::cleanupOldPrograms<\/a>"],[0,6,"<a href=\"GuideManager.php.html#331\">Phlex\\LiveTv\\GuideManager::importGuideData<\/a>"],[0,2,"<a href=\"GuideManager.php.html#360\">Phlex\\LiveTv\\GuideManager::exportGuideData<\/a>"],[0,1,"<a href=\"GuideManager.php.html#380\">Phlex\\LiveTv\\GuideManager::getChannelGuide<\/a>"],[0,1,"<a href=\"GuideManager.php.html#391\">Phlex\\LiveTv\\GuideManager::setCacheTtl<\/a>"],[0,1,"<a href=\"GuideManager.php.html#399\">Phlex\\LiveTv\\GuideManager::clearCache<\/a>"],[0,1,"<a href=\"GuideManager.php.html#408\">Phlex\\LiveTv\\GuideManager::getCacheStats<\/a>"],[0,1,"<a href=\"GuideManager.php.html#419\">Phlex\\LiveTv\\GuideManager::invalidateCacheForChannel<\/a>"],[0,3,"<a href=\"GuideManager.php.html#429\">Phlex\\LiveTv\\GuideManager::mapProgram<\/a>"],[0,1,"<a href=\"GuideManager.php.html#458\">Phlex\\LiveTv\\GuideManager::generateUuid<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#45\">Phlex\\LiveTv\\LiveTvManager::__construct<\/a>"],[0,2,"<a href=\"LiveTvManager.php.html#64\">Phlex\\LiveTv\\LiveTvManager::discoverTuners<\/a>"],[0,5,"<a href=\"LiveTvManager.php.html#85\">Phlex\\LiveTv\\LiveTvManager::scanForTuners<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#121\">Phlex\\LiveTv\\LiveTvManager::detectDvbType<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#130\">Phlex\\LiveTv\\LiveTvManager::getTunerCapabilities<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#143\">Phlex\\LiveTv\\LiveTvManager::registerTuner<\/a>"],[0,2,"<a href=\"LiveTvManager.php.html#166\">Phlex\\LiveTv\\LiveTvManager::scanChannels<\/a>"],[0,3,"<a href=\"LiveTvManager.php.html#187\">Phlex\\LiveTv\\LiveTvManager::getTuner<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#200\">Phlex\\LiveTv\\LiveTvManager::getTuners<\/a>"],[0,3,"<a href=\"LiveTvManager.php.html#208\">Phlex\\LiveTv\\LiveTvManager::updateTunerStatus<\/a>"],[0,4,"<a href=\"LiveTvManager.php.html#226\">Phlex\\LiveTv\\LiveTvManager::performChannelScan<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#258\">Phlex\\LiveTv\\LiveTvManager::scanFrequency<\/a>"],[0,3,"<a href=\"LiveTvManager.php.html#271\">Phlex\\LiveTv\\LiveTvManager::tuneToChannel<\/a>"],[0,7,"<a href=\"LiveTvManager.php.html#311\">Phlex\\LiveTv\\LiveTvManager::findAvailableTuner<\/a>"],[0,2,"<a href=\"LiveTvManager.php.html#336\">Phlex\\LiveTv\\LiveTvManager::stopTuning<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#353\">Phlex\\LiveTv\\LiveTvManager::getTuneRequest<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#361\">Phlex\\LiveTv\\LiveTvManager::getActiveTuneRequests<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#369\">Phlex\\LiveTv\\LiveTvManager::getChannelManager<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#377\">Phlex\\LiveTv\\LiveTvManager::getGuideManager<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#385\">Phlex\\LiveTv\\LiveTvManager::getRecorder<\/a>"],[0,1,"<a href=\"LiveTvManager.php.html#393\">Phlex\\LiveTv\\LiveTvManager::generateUuid<\/a>"],[0,1,"<a href=\"Recorder.php.html#48\">Phlex\\LiveTv\\Recorder::__construct<\/a>"],[0,1,"<a href=\"Recorder.php.html#59\">Phlex\\LiveTv\\Recorder::scheduleRecording<\/a>"],[0,2,"<a href=\"Recorder.php.html#95\">Phlex\\LiveTv\\Recorder::getRecording<\/a>"],[0,3,"<a href=\"Recorder.php.html#112\">Phlex\\LiveTv\\Recorder::getAllRecordings<\/a>"],[0,2,"<a href=\"Recorder.php.html#136\">Phlex\\LiveTv\\Recorder::getUpcomingRecordings<\/a>"],[0,2,"<a href=\"Recorder.php.html#159\">Phlex\\LiveTv\\Recorder::getRecordingsForChannel<\/a>"],[0,2,"<a href=\"Recorder.php.html#177\">Phlex\\LiveTv\\Recorder::getUserRecordings<\/a>"],[0,4,"<a href=\"Recorder.php.html#195\">Phlex\\LiveTv\\Recorder::startRecording<\/a>"],[0,4,"<a href=\"Recorder.php.html#225\">Phlex\\LiveTv\\Recorder::stopRecording<\/a>"],[0,3,"<a href=\"Recorder.php.html#263\">Phlex\\LiveTv\\Recorder::cancelRecording<\/a>"],[0,4,"<a href=\"Recorder.php.html#284\">Phlex\\LiveTv\\Recorder::deleteRecording<\/a>"],[0,1,"<a href=\"Recorder.php.html#313\">Phlex\\LiveTv\\Recorder::updateRecordingStatus<\/a>"],[0,1,"<a href=\"Recorder.php.html#325\">Phlex\\LiveTv\\Recorder::getRecordingPath<\/a>"],[0,2,"<a href=\"Recorder.php.html#333\">Phlex\\LiveTv\\Recorder::hasStorageSpace<\/a>"],[0,1,"<a href=\"Recorder.php.html#348\">Phlex\\LiveTv\\Recorder::getUsedStorageBytes<\/a>"],[0,2,"<a href=\"Recorder.php.html#362\">Phlex\\LiveTv\\Recorder::getAvailableStorageBytes<\/a>"],[0,1,"<a href=\"Recorder.php.html#374\">Phlex\\LiveTv\\Recorder::estimateRecordingSize<\/a>"],[0,1,"<a href=\"Recorder.php.html#385\">Phlex\\LiveTv\\Recorder::startTimeShift<\/a>"],[0,2,"<a href=\"Recorder.php.html#418\">Phlex\\LiveTv\\Recorder::stopTimeShift<\/a>"],[0,1,"<a href=\"Recorder.php.html#434\">Phlex\\LiveTv\\Recorder::getTimeShift<\/a>"],[0,2,"<a href=\"Recorder.php.html#442\">Phlex\\LiveTv\\Recorder::getTimeShiftPosition<\/a>"],[0,2,"<a href=\"Recorder.php.html#454\">Phlex\\LiveTv\\Recorder::seekTimeShift<\/a>"],[0,1,"<a href=\"Recorder.php.html#473\">Phlex\\LiveTv\\Recorder::getActiveRecordingCount<\/a>"],[0,1,"<a href=\"Recorder.php.html#481\">Phlex\\LiveTv\\Recorder::getActiveTimeShiftCount<\/a>"],[0,2,"<a href=\"Recorder.php.html#489\">Phlex\\LiveTv\\Recorder::getRecordingCountByStatus<\/a>"],[0,1,"<a href=\"Recorder.php.html#506\">Phlex\\LiveTv\\Recorder::updatePriority<\/a>"],[0,1,"<a href=\"Recorder.php.html#519\">Phlex\\LiveTv\\Recorder::getStorageStats<\/a>"],[0,1,"<a href=\"Recorder.php.html#534\">Phlex\\LiveTv\\Recorder::mapRecording<\/a>"],[0,1,"<a href=\"Recorder.php.html#561\">Phlex\\LiveTv\\Recorder::generateUuid<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

@@ -5,8 +5,16 @@ namespace Phlex\Tests\Unit\Server\Http;
 use PHPUnit\Framework\TestCase;
 use Phlex\Server\Http\Request;
 
+/**
+ * Unit tests for Request class.
+ *
+ * @covers \Phlex\Server\Http\Request
+ */
 class RequestTest extends TestCase
 {
+    /**
+     * @covers \Phlex\Server\Http\Request::getBearerToken
+     */
     public function testCanGetBearerToken(): void
     {
         $_SERVER['HTTP_AUTHORIZATION'] = 'Bearer test-token-123';
@@ -16,6 +24,9 @@ class RequestTest extends TestCase
         $this->assertEquals('test-token-123', $request->getBearerToken());
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Request::getHeader
+     */
     public function testGetHeaderReturnsNullWhenNotPresent(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -28,6 +39,12 @@ class RequestTest extends TestCase
         $this->assertNull($request->getHeader('X-Custom-Header'));
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Request::isGet
+     * @covers \Phlex\Server\Http\Request::isPost
+     * @covers \Phlex\Server\Http\Request::isPut
+     * @covers \Phlex\Server\Http\Request::isDelete
+     */
     public function testIsMethods(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -41,6 +58,9 @@ class RequestTest extends TestCase
         $this->assertFalse($request->isDelete());
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Request::getClientIp
+     */
     public function testGetClientIpWithForwardedHeader(): void
     {
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.1, 10.0.0.1';

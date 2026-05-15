@@ -1,0 +1,121 @@
+name: Coding Standards
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main, develop ]
+
+jobs:
+  phpcs:
+    name: PHP CodeSniffer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: json
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPCS
+        if: always()
+        run: |
+          if [ -f vendor/bin/phpcs ]; then
+            ./vendor/bin/phpcs --standard=PSR12 -n --colors src/
+          fi
+
+  phpstan:
+    name: PHPStan Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: json
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        if: always()
+        run: |
+          if [ -f vendor/bin/phpstan ]; then
+            ./vendor/bin/phpstan analyze src/ --level=9 --no-progress --error-format=github
+          fi
+
+  psalm:
+    name: Psalm Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: json
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run Psalm
+        if: always()
+        run: |
+          if [ -f vendor/bin/psalm ]; then
+            ./vendor/bin/psalm --show-info=false
+          fi
+
+  composer-validate:
+    name: Composer Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Validate Composer
+        run: composer validate --strict --no-check-publish
+
+  security-check:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run Security Audit
+        if: always()
+        run: |
+          if [ -f vendor/bin/security-checker ]; then
+            ./vendor/bin/security-checker security:check
+          elif [ -f vendor/bin/composer-audit ]; then
+            ./vendor/bin/composer-audit audit --format=github
+          fi

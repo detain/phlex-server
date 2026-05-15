@@ -7,15 +7,28 @@ use Phlex\Server\Http\Router;
 use Phlex\Server\Http\Request;
 use Phlex\Server\Http\Response;
 
+/**
+ * Unit tests for Router class.
+ *
+ * @covers \Phlex\Server\Http\Router
+ */
 class RouterTest extends TestCase
 {
+    /** @var Router Router instance under test */
     private Router $router;
 
+    /**
+     * Set up router for each test.
+     */
     protected function setUp(): void
     {
         $this->router = new Router();
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Router::get
+     * @covers \Phlex\Server\Http\Router::getRoutes
+     */
     public function testCanRegisterGetRoute(): void
     {
         $this->router->get('/test', function($req) {
@@ -27,6 +40,11 @@ class RouterTest extends TestCase
         $this->assertArrayHasKey('GET', $routes);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Router::post
+     * @covers \Phlex\Server\Http\Router::put
+     * @covers \Phlex\Server\Http\Router::delete
+     */
     public function testCanRegisterMultipleHttpMethods(): void
     {
         $this->router->post('/test', fn() => new Response());
@@ -40,6 +58,10 @@ class RouterTest extends TestCase
         $this->assertArrayHasKey('DELETE', $routes);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Router::get
+     * @covers \Phlex\Server\Http\Router::dispatch
+     */
     public function testCanUsePathParameters(): void
     {
         $this->router->get('/users/{id}', function($req, $params) {
@@ -58,6 +80,9 @@ class RouterTest extends TestCase
         $this->assertEquals(200, $response->statusCode);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Router::dispatch
+     */
     public function testReturns404ForUnknownRoute(): void
     {
         $this->router->get('/exists', fn() => new Response());

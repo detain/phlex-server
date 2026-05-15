@@ -5,8 +5,17 @@ namespace Phlex\Tests\Unit\Server\Http;
 use PHPUnit\Framework\TestCase;
 use Phlex\Server\Http\Response;
 
+/**
+ * Unit tests for Response class.
+ *
+ * @covers \Phlex\Server\Http\Response
+ */
 class ResponseTest extends TestCase
 {
+    /**
+     * @covers \Phlex\Server\Http\Response::json
+     * @covers \Phlex\Server\Http\Response::status
+     */
     public function testCanCreateJsonResponse(): void
     {
         $response = (new Response())->json(['key' => 'value']);
@@ -16,6 +25,11 @@ class ResponseTest extends TestCase
         $this->assertStringContainsString('"key"', $response->body);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Response::status
+     * @covers \Phlex\Server\Http\Response::header
+     * @covers \Phlex\Server\Http\Response::json
+     */
     public function testCanChainMethods(): void
     {
         $response = (new Response())
@@ -27,6 +41,9 @@ class ResponseTest extends TestCase
         $this->assertEquals('value', $response->headers['X-Custom']);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Response::html
+     */
     public function testCanCreateHtmlResponse(): void
     {
         $response = (new Response())->html('<h1>Hello</h1>');
@@ -34,6 +51,9 @@ class ResponseTest extends TestCase
         $this->assertEquals('text/html; charset=utf-8', $response->headers['Content-Type']);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Response::redirect
+     */
     public function testCanRedirect(): void
     {
         $response = (new Response())->redirect('https://example.com', 301);
@@ -42,6 +62,9 @@ class ResponseTest extends TestCase
         $this->assertEquals('https://example.com', $response->headers['Location']);
     }
 
+    /**
+     * @covers \Phlex\Server\Http\Response::noContent
+     */
     public function testNoContentResponse(): void
     {
         $response = (new Response())->noContent();

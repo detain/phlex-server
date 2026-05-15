@@ -6,48 +6,72 @@ use PHPUnit\Framework\TestCase;
 use Phlex\Server\WebSocket\ConnectionPool;
 use Phlex\Server\WebSocket\ConnectionInterface;
 
+/**
+ * Unit tests for ConnectionPool class.
+ *
+ * @covers \Phlex\Server\WebSocket\ConnectionPool
+ */
 class ConnectionPoolTest extends TestCase
 {
+    /**
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::getInstance
+     */
     public function testCanGetInstance(): void
     {
         $pool = ConnectionPool::getInstance();
         $this->assertInstanceOf(ConnectionPool::class, $pool);
     }
 
+    /**
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::add
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::remove
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::get
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::count
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::clear
+     */
     public function testCanAddAndRemoveConnection(): void
     {
         $pool = ConnectionPool::getInstance();
         $pool->clear();
-        
+
         // Create mock connection
         $connection = $this->createMockConnection('test-1');
         $pool->add($connection);
-        
+
         $this->assertEquals(1, $pool->count());
         $this->assertNotNull($pool->get('test-1'));
-        
+
         $pool->remove('test-1');
         $this->assertEquals(0, $pool->count());
     }
 
+    /**
+     * @covers \Phlex\Server\WebSocket\ConnectionPool::findByUserId
+     */
     public function testCanFindByUserId(): void
     {
         $pool = ConnectionPool::getInstance();
         $pool->clear();
-        
+
         $conn1 = $this->createMockConnection('conn-1');
         $conn1->setUserId('user-1');
         $pool->add($conn1);
-        
+
         $conn2 = $this->createMockConnection('conn-2');
         $conn2->setUserId('user-2');
         $pool->add($conn2);
-        
+
         $found = $pool->findByUserId('user-1');
         $this->assertCount(1, $found);
         $this->assertEquals('conn-1', $found[0]->getId());
     }
 
+    /**
+     * Creates a mock connection for testing.
+     *
+     * @param string $id The connection ID
+     * @return ConnectionInterface Mock connection instance
+     */
     private function createMockConnection(string $id): ConnectionInterface
     {
         return new class($id) implements ConnectionInterface {
@@ -57,7 +81,7 @@ class ConnectionPoolTest extends TestCase
             private bool $authenticated = false;
             private int $lastActivity;
             private array $sessionData = [];
-            
+
             public function __construct(string $id) { $this->id = $id; $this->lastActivity = time(); }
             public function getId(): string { return $this->id; }
             public function getUserId(): ?string { return $this->userId; }

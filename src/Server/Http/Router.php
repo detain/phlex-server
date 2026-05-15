@@ -1,45 +1,130 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlex\Server\Http;
 
+/**
+ * HTTP Router for the Phlex Media Server.
+ *
+ * This class handles route registration and request dispatching.
+ * It supports path parameters, middleware, and route groups.
+ *
+ * @author Phlex Media Server Team
+ * @version 1.0.0
+ * @description HTTP Router with support for path parameters, middleware, and route groups.
+ * @see Request For request representation
+ * @see Response For response generation
+ *
+ * @example
+ * ```php
+ * $router = new Router();
+ * $router->get('/users/{id}', [UserController::class, 'show']);
+ * $router->post('/users', [UserController::class, 'create']);
+ * $response = $router->dispatch($request);
+ * ```
+ */
 class Router
 {
+    /** @var array<string, array<string, array{handler: callable|array, middleware: array<callable>, path: string}>> Registered routes by method and pattern */
     private array $routes = [];
+
+    /** @var array<string, string> Named routes mapping name to path */
     private array $namedRoutes = [];
+
+    /** @var array<callable> Stack of global middleware */
     private array $middleware = [];
+
+    /** @var array<callable> Middleware for the current route group */
     private array $groupMiddleware = [];
+
+    /** @var string|null Current route group prefix */
     private ?string $groupPrefix = null;
 
+    /**
+     * Registers a GET route.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     *
+     * @example
+     * ```php
+     * $router->get('/users', fn($req) => (new Response())->json(['users' => []]));
+     * ```
+     */
     public function get(string $path, callable|array $handler): self
     {
         return $this->addRoute('GET', $path, $handler);
     }
 
+    /**
+     * Registers a POST route.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     */
     public function post(string $path, callable|array $handler): self
     {
         return $this->addRoute('POST', $path, $handler);
     }
 
+    /**
+     * Registers a PUT route.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     */
     public function put(string $path, callable|array $handler): self
     {
         return $this->addRoute('PUT', $path, $handler);
     }
 
+    /**
+     * Registers a PATCH route.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     */
     public function patch(string $path, callable|array $handler): self
     {
         return $this->addRoute('PATCH', $path, $handler);
     }
 
+    /**
+     * Registers a DELETE route.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     */
     public function delete(string $path, callable|array $handler): self
     {
         return $this->addRoute('DELETE', $path, $handler);
     }
 
+    /**
+     * Registers an OPTIONS route.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     */
     public function options(string $path, callable|array $handler): self
     {
         return $this->addRoute('OPTIONS', $path, $handler);
     }
 
+    /**
+     * Registers a route for all common HTTP methods.
+     *
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     */
     public function any(string $path, callable|array $handler): self
     {
         foreach (['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'] as $method) {
@@ -48,6 +133,19 @@ class Router
         return $this;
     }
 
+    /**
+     * Registers a route for specific HTTP methods.
+     *
+     * @param array<string> $methods Array of HTTP method names
+     * @param string $path The route path (supports {param} placeholders)
+     * @param callable|array $handler The handler callback or [Controller::class, 'method']
+     * @return self For method chaining
+     *
+     * @example
+     * ```php
+     * $router->match(['GET', 'POST'], '/resource', handler);
+     * ```
+     */
     public function match(array $methods, string $path, callable|array $handler): self
     {
         foreach ($methods as $method) {
@@ -56,11 +154,19 @@ class Router
         return $this;
     }
 
+    /**
+     * Internal method to add a route to the routing table.
+     *
+     * @param string $method The HTTP method
+     * @param string $path The route path
+     * @param callable|array $handler The handler
+     * @return self For method chaining
+     */
     private function addRoute(string $method, string $path, callable|array $handler): self
     {
         $fullPath = $this->groupPrefix ? $this->groupPrefix . $path : $path;
 
-        // Convert path parameters like {id} to regex
+        // Convert path parameters like {id} to named regex capture groups
         $pattern = preg_replace('/\{([a-zA-Z_]+)\}/', '(?P<$1>[^/]+)', $fullPath);
         $pattern = '#^' . $pattern . '$#';
 
@@ -73,12 +179,34 @@ class Router
         return $this;
     }
 
+    /**
+     * Adds middleware to the current group.
+     *
+     * @param callable $middleware The middleware callback
+     * @return self For method chaining
+     */
     public function middleware(callable $middleware): self
     {
         $this->groupMiddleware[] = $middleware;
         return $this;
     }
 
+    /**
+     * Creates a route group with shared prefix and middleware.
+     *
+     * @param string $prefix Common path prefix for all routes in the group
+     * @param callable $callback Callback that registers routes in the group
+     * @param array<callable> $middleware Optional middleware for all routes in the group
+     * @return self For method chaining
+     *
+     * @example
+     * ```php
+     * $router->group('/api/v1', function($r) {
+     *     $r->get('/users', handler);
+     *     $r->post('/users', handler);
+     * }, [authMiddleware()]);
+     * ```
+     */
     public function group(string $prefix, callable $callback, array $middleware = []): self
     {
         $previousPrefix = $this->groupPrefix;
@@ -95,6 +223,18 @@ class Router
         return $this;
     }
 
+    /**
+     * Dispatches a request to the appropriate route handler.
+     *
+     * @param Request $request The request to dispatch
+     * @return Response The response from the matched handler
+     *
+     * @example
+     * ```php
+     * $response = $router->dispatch($request);
+     * $response->send();
+     * ```
+     */
     public function dispatch(Request $request): Response
     {
         $method = $request->method;
@@ -106,17 +246,17 @@ class Router
 
         foreach ($this->routes[$method] as $pattern => $route) {
             if (preg_match($pattern, $path, $matches)) {
-                // Extract path parameters
+                // Extract path parameters (named capture groups only)
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 $request->pathParams = $params;
 
-                // Apply middleware
-                $middlewareHandler = $this->runMiddleware($route['middleware'], $request);
-                if ($middlewareHandler instanceof Response) {
-                    return $middlewareHandler;
+                // Apply route middleware
+                $middlewareResponse = $this->runMiddleware($route['middleware'], $request);
+                if ($middlewareResponse instanceof Response) {
+                    return $middlewareResponse;
                 }
 
-                // Call handler
+                // Call the route handler
                 return $this->callHandler($route['handler'], $request, $params);
             }
         }
@@ -124,6 +264,13 @@ class Router
         return $this->notFound();
     }
 
+    /**
+     * Runs middleware stack and returns early if a response is produced.
+     *
+     * @param array<callable> $middlewareStack Array of middleware to run
+     * @param Request $request The current request
+     * @return Response|null The middleware response, or null to continue
+     */
     private function runMiddleware(array $middlewareStack, Request $request): ?Response
     {
         foreach ($middlewareStack as $middleware) {
@@ -135,6 +282,16 @@ class Router
         return null;
     }
 
+    /**
+     * Calls the appropriate handler for a matched route.
+     *
+     * @param callable|array $handler The handler callback or [Controller, method]
+     * @param Request $request The current request
+     * @param array<string, string> $params Extracted path parameters
+     * @return Response The handler's response
+     *
+     * @throws \BadMethodCallException If handler format is invalid
+     */
     private function callHandler(callable|array $handler, Request $request, array $params): Response
     {
         if (is_array($handler)) {
@@ -146,6 +303,11 @@ class Router
         return $handler($request, $params);
     }
 
+    /**
+     * Creates a 404 Not Found response.
+     *
+     * @return Response The 404 response
+     */
     private function notFound(): Response
     {
         return (new Response())
@@ -156,6 +318,13 @@ class Router
             ]);
     }
 
+    /**
+     * Gets all registered routes.
+     *
+     * @return array<string, array<string, array{handler: callable|array, middleware: array<callable>, path: string}>> The routes array
+     *
+     * @description Returns the internal routes array for inspection or testing.
+     */
     public function getRoutes(): array
     {
         return $this->routes;
