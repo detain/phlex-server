@@ -9,14 +9,31 @@ use Phlex\Common\Logger\LoggerFactory;
 use Phlex\Common\Logger\LogChannels;
 use Phlex\Media\Library\ItemRepository;
 
+/**
+ * MetadataManager coordinates metadata fetching from multiple providers.
+ *
+ * This class manages registration of metadata providers (TMDB, TVDB, Fanart.tv, local NFO),
+ * prioritizes them by media type, and handles the refresh workflow for items.
+ * It supports cascading provider fallback when one provider fails to return results.
+ *
+ * @author Phlex Development Team
+ * @version 1.0.0
+ * @description Metadata fetching coordination with provider prioritization and fallback
+ * @see MetadataProviderInterface For provider implementation contract
+ * @see TmdbProvider For TMDB movie metadata
+ * @see TvdbProvider For TVDB series metadata
+ */
 class MetadataManager
 {
+    /** @var Connection Database connection */
     private Connection $db;
+
+    /** @var ItemRepository Repository for media item persistence */
     private ItemRepository $itemRepository;
-    
+
     /** @var array<string, array<string, MetadataProviderInterface>> Provider type => [name => provider] */
     private array $providersByType = [];
-    
+
     /** @var array<string, array<int, string>> Media type => Provider types in priority order */
     private array $providerPriority = [
         'movie' => ['tmdb', 'local'],
@@ -25,12 +42,19 @@ class MetadataManager
         'artist' => ['musicbrainz', 'local'],
         'album' => ['musicbrainz', 'local'],
     ];
-    
+
     /** @var array<string, MetadataProviderInterface> Flat provider lookup by name */
     private array $providers = [];
-    
+
+    /** @var \Phlex\Common\Logger\StructuredLogger Structured logger instance */
     private \Phlex\Common\Logger\StructuredLogger $logger;
 
+    /**
+     * Constructor for MetadataManager.
+     *
+     * @param Connection $db Database connection for media item queries
+     * @param ItemRepository $itemRepository Repository for media item operations
+     */
     public function __construct(Connection $db, ItemRepository $itemRepository)
     {
         $this->db = $db;
@@ -40,36 +64,43 @@ class MetadataManager
 
     /**
      * Register a metadata provider.
-     * 
+     *
      * @param string $name Provider name (e.g., 'tmdb', 'tvdb', 'fanart', 'local')
      * @param MetadataProviderInterface $provider The provider instance
-     * @param array<string> $supportedTypes Media types this provider supports
+     * @param array<string> $supportedTypes Media types this provider supports (e.g., ['movie', 'series'])
+     * @return void
      */
     public function registerProvider(
-        string $name, 
+        string $name,
         MetadataProviderInterface $provider,
         array $supportedTypes = []
     ): void {
         $this->providers[$name] = $provider;
-        
+
         foreach ($supportedTypes as $type) {
             if (!isset($this->providersByType[$type])) {
                 $this->providersByType[$type] = [];
             }
             $this->providersByType[$type][$name] = $provider;
         }
-        
+
         $this->logger->info('Registered metadata provider', [
-            'name' => $name, 
+            'name' => $name,
             'supported_types' => $supportedTypes
         ]);
     }
 
     /**
      * Set provider priority for a media type.
-     * 
-     * @param string $mediaType e.g., 'movie', 'series'
-     * @param array<string> $priority Ordered list of provider names (highest first)
+     *
+     * @param string $mediaType e.g., 'movie', 'series', 'episode'
+     * @param array<string> $priority Ordered list of provider names (highest priority first)
+     * @return void
+     *
+     * @example
+     * ```php
+     * $manager->setProviderPriority('movie', ['local', 'tmdb', 'fanart']);
+     * ```
      */
     public function setProviderPriority(string $mediaType, array $priority): void
     {
@@ -82,25 +113,30 @@ class MetadataManager
 
     /**
      * Get providers for a specific media type in priority order.
-     * 
-     * @return MetadataProviderInterface[]
+     *
+     * @param string $mediaType The media type to get providers for
+     * @return MetadataProviderInterface[] Array of providers ordered by priority
      */
     public function getProvidersForType(string $mediaType): array
     {
         $priority = $this->providerPriority[$mediaType] ?? ['local'];
         $result = [];
-        
+
         foreach ($priority as $providerName) {
             if (isset($this->providers[$providerName])) {
                 $result[] = $this->providers[$providerName];
             }
         }
-        
+
         return $result;
     }
 
     /**
      * Refresh metadata for a single item, trying providers in priority order.
+     *
+     * @param string $itemId The media item's unique identifier
+     * @param bool $force Force refresh even if recent metadata exists
+     * @return bool True if metadata was successfully refreshed from any provider
      */
     public function refreshItemMetadata(string $itemId, bool $force = false): bool
     {
@@ -112,7 +148,7 @@ class MetadataManager
 
         $mediaType = $item['type'];
         $providers = $this->getProvidersForType($mediaType);
-        
+
         if (empty($providers)) {
             $this->logger->debug('No providers for item type', ['type' => $mediaType]);
             return false;
@@ -121,46 +157,55 @@ class MetadataManager
         $metadata = $this->parseMetadataJson($item['metadata_json'] ?? '{}');
         $searchQuery = $metadata['name'] ?? $item['name'];
         $year = $metadata['year'] ?? null;
-        
+
         // Try each provider in priority order
         foreach ($providers as $provider) {
             $providerName = $this->getProviderName($provider);
-            
+
             $this->logger->debug('Attempting metadata refresh', [
                 'item_id' => $itemId,
                 'provider' => $providerName,
             ]);
-            
+
             $result = $this->tryProvider(
-                $provider, 
+                $provider,
                 $providerName,
-                $itemId, 
-                $item, 
-                $searchQuery, 
+                $itemId,
+                $item,
+                $searchQuery,
                 $year,
                 $force
             );
-            
+
             if ($result) {
                 return true;
             }
-            
+
             $this->logger->info('Provider failed, trying next', [
                 'item_id' => $itemId,
                 'provider' => $providerName,
             ]);
         }
-        
+
         $this->logger->info('No provider succeeded for item', [
             'item_id' => $itemId,
             'media_type' => $mediaType,
         ]);
-        
+
         return false;
     }
 
     /**
-     * Try a specific provider to refresh metadata.
+     * Try a specific provider to refresh metadata for an item.
+     *
+     * @param MetadataProviderInterface $provider The provider to try
+     * @param string $providerName The provider's name for logging
+     * @param string $itemId The media item's unique identifier
+     * @param array<string, mixed> $item The media item data
+     * @param string $searchQuery The search query string
+     * @param string|null $year Optional year to filter search
+     * @param bool $force Force refresh even if recent metadata exists
+     * @return bool True if metadata was successfully fetched and saved
      */
     private function tryProvider(
         MetadataProviderInterface $provider,
@@ -172,7 +217,7 @@ class MetadataManager
         bool $force
     ): bool {
         $metadata = $this->parseMetadataJson($item['metadata_json'] ?? '{}');
-        
+
         // Check if we already have recent metadata from this provider
         if (!$force && $this->hasRecentMetadata($metadata, $providerName)) {
             $this->logger->debug('Skipping - recent metadata exists', [
@@ -181,7 +226,7 @@ class MetadataManager
             ]);
             return true;
         }
-        
+
         // Search for match
         $results = $provider->search($searchQuery, ['year' => $year]);
         if (empty($results)) {
@@ -212,7 +257,7 @@ class MetadataManager
         // Build external IDs tracking
         $externalIds = $metadata['external_ids'] ?? [];
         $externalIds[$providerName] = $externalId;
-        
+
         // If we have IDs from other providers, preserve them
         if (isset($metadata['external_ids']) && is_array($metadata['external_ids'])) {
             foreach ($metadata['external_ids'] as $key => $value) {
@@ -239,16 +284,20 @@ class MetadataManager
         ]);
 
         $this->logger->info('Metadata refreshed', [
-            'item_id' => $itemId, 
+            'item_id' => $itemId,
             'external_id' => $externalId,
             'provider' => $providerName,
         ]);
-        
+
         return true;
     }
 
     /**
      * Check if metadata was recently refreshed from a specific provider.
+     *
+     * @param array<string, mixed> $metadata The current metadata array
+     * @param string $providerName The provider name to check
+     * @return bool True if recent metadata exists from this provider
      */
     private function hasRecentMetadata(array $metadata, string $providerName): bool
     {
@@ -256,22 +305,26 @@ class MetadataManager
         if (!isset($metadata['details'][$providerName])) {
             return false;
         }
-        
+
         // Check refresh timestamp (within last 24 hours)
         if (!isset($metadata['metadata_refreshed_at'])) {
             return false;
         }
-        
+
         $refreshedAt = strtotime($metadata['metadata_refreshed_at']);
         if ($refreshedAt === false) {
             return false;
         }
-        
+
         return (time() - $refreshedAt) < 86400; // 24 hours
     }
 
     /**
-     * Refresh metadata for entire library.
+     * Refresh metadata for entire library with optional progress callback.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param callable|null $progressCallback Optional callback(current, total) for progress updates
+     * @return int Number of items successfully refreshed
      */
     public function refreshLibraryMetadata(string $libraryId, callable $progressCallback = null): int
     {
@@ -298,6 +351,9 @@ class MetadataManager
 
     /**
      * Get provider name from provider instance.
+     *
+     * @param MetadataProviderInterface $provider The provider instance
+     * @return string The provider name or 'unknown' if not found
      */
     private function getProviderName(MetadataProviderInterface $provider): string
     {
@@ -311,6 +367,8 @@ class MetadataManager
 
     /**
      * Get all registered provider names.
+     *
+     * @return array<string> Array of provider names
      */
     public function getRegisteredProviders(): array
     {
@@ -319,6 +377,9 @@ class MetadataManager
 
     /**
      * Check if a specific provider is registered.
+     *
+     * @param string $name The provider name to check
+     * @return bool True if provider is registered
      */
     public function hasProvider(string $name): bool
     {
@@ -327,12 +388,21 @@ class MetadataManager
 
     /**
      * Get provider by name.
+     *
+     * @param string $name The provider name
+     * @return MetadataProviderInterface|null The provider instance or null if not found
      */
     public function getProvider(string $name): ?MetadataProviderInterface
     {
         return $this->providers[$name] ?? null;
     }
 
+    /**
+     * Parse metadata JSON string to array.
+     *
+     * @param string|null $json JSON string to parse
+     * @return array<string, mixed> Parsed metadata array or empty array on failure
+     */
     private function parseMetadataJson(?string $json): array
     {
         if (empty($json)) {

@@ -1,18 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlex\Media\Metadata;
 
 use Phlex\Common\Logger\LoggerFactory;
 use Phlex\Common\Logger\LogChannels;
 
+/**
+ * MetadataHttpClient provides HTTP communication with metadata provider APIs.
+ *
+ * This client handles HTTP requests to external metadata services with built-in
+ * caching, error handling, and API key authentication. It validates JSON responses
+ * and logs errors appropriately.
+ *
+ * @author Phlex Development Team
+ * @version 1.0.0
+ * @description HTTP client for metadata provider API communication with caching
+ */
 class MetadataHttpClient
 {
+    /** @var string Base URL for API requests (without trailing slash) */
     private string $baseUrl;
+
+    /** @var string API key for authentication */
     private string $apiKey;
+
+    /** @var int Request timeout in seconds */
     private int $timeout;
+
+    /** @var \Phlex\Common\Logger\StructuredLogger Structured logger instance */
     private \Phlex\Common\Logger\StructuredLogger $logger;
+
+    /** @var array<string, mixed> Response cache keyed by endpoint and parameters */
     private array $cache = [];
 
+    /**
+     * Constructor for MetadataHttpClient.
+     *
+     * @param string $baseUrl Base URL for the API (e.g., 'https://api.themoviedb.org/3')
+     * @param string $apiKey API key for authentication
+     * @param int $timeout Request timeout in seconds (default: 10)
+     */
     public function __construct(string $baseUrl, string $apiKey, int $timeout = 10)
     {
         $this->baseUrl = rtrim($baseUrl, '/');
@@ -21,10 +50,17 @@ class MetadataHttpClient
         $this->logger = LoggerFactory::get(LogChannels::MEDIA);
     }
 
+    /**
+     * Perform GET request to metadata API with caching.
+     *
+     * @param string $endpoint API endpoint path (e.g., '/search/movie')
+     * @param array<string, mixed> $params Query parameters to include in request
+     * @return array<string, mixed>|null Decoded JSON response or null on failure
+     */
     public function get(string $endpoint, array $params = []): ?array
     {
         $cacheKey = md5($endpoint . json_encode($params));
-        
+
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -50,7 +86,7 @@ class MetadataHttpClient
         }
 
         $data = json_decode($response, true);
-        
+
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->logger->error('Invalid JSON response from metadata API', [
                 'url' => $url,
@@ -63,6 +99,11 @@ class MetadataHttpClient
         return $data;
     }
 
+    /**
+     * Clear the response cache.
+     *
+     * @return void
+     */
     public function clearCache(): void
     {
         $this->cache = [];

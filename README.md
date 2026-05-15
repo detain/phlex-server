@@ -6,7 +6,7 @@ A comprehensive media server platform built with PHP 8.3+, featuring real-time W
 
 Phlex Media Server provides a complete media management and streaming solution:
 
-- **Media Library Management**: Organize and browse media collections
+- **Media Library Management**: Organize and browse media collections with automatic scanning
 - **User Authentication**: JWT-based auth with refresh tokens
 - **Real-time SyncPlay**: Watch content together with friends
 - **Live TV Support**: DVR and guide integration
@@ -14,6 +14,8 @@ Phlex Media Server provides a complete media management and streaming solution:
 - **Transcoding**: On-the-fly media conversion via FFmpeg
 - **HLS Streaming**: Adaptive bitrate streaming for web clients
 - **WebSocket Events**: Real-time progress and notification delivery
+- **Multi-Source Metadata**: TMDB, TVDB, Fanart.tv, and local NFO file support
+- **Content Filtering**: Parental controls with rating and genre-based filtering
 
 ## Architecture
 
@@ -34,6 +36,10 @@ src/
 │       └── Events.php          # Event type constants
 ├── Session/            # Playback session management
 ├── Media/              # Media library and metadata
+│   ├── Library/        # Library management (LibraryManager, ItemRepository, MediaScanner)
+│   ├── Metadata/      # Metadata fetching (TMDB, TVDB, Fanart, NFO providers)
+│   ├── Transcoding/    # FFmpeg transcoding
+│   └── Streaming/      # HLS streaming and quality selection
 ├── Auth/               # Authentication services
 └── Common/             # Shared utilities
 ```

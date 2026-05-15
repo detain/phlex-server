@@ -1,13 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlex\Media\Metadata;
 
+/**
+ * TmdbProvider fetches movie metadata from The Movie Database (TMDB) API.
+ *
+ * This provider supports searching movies, fetching detailed information
+ * including credits and genres, and retrieving images (posters, backdrops, logos).
+ *
+ * @author Phlex Development Team
+ * @version 1.0.0
+ * @description TMDB API provider for movie metadata
+ * @see https://api.themoviedb.org/3/
+ * @see MetadataProviderInterface For provider contract
+ */
 class TmdbProvider implements MetadataProviderInterface
 {
+    /** @var MetadataHttpClient HTTP client for TMDB API requests */
     private MetadataHttpClient $http;
+
+    /** @var string Base URL for TMDB image CDN */
     private string $imageBaseUrl;
+
+    /** @var array<string, mixed> Response cache for API calls */
     private array $cache = [];
 
+    /**
+     * Constructor for TmdbProvider.
+     *
+     * @param string $apiKey TMDB API v3 authentication key
+     */
     public function __construct(string $apiKey)
     {
         $this->http = new MetadataHttpClient(
@@ -17,6 +41,13 @@ class TmdbProvider implements MetadataProviderInterface
         $this->imageBaseUrl = 'https://image.tmdb.org/t/p';
     }
 
+    /**
+     * Search for movies by title.
+     *
+     * @param string $query Movie title search query
+     * @param array<string, mixed> $options Search options (language, include_adult)
+     * @return array<int, array{id: int, title: string, original_title: string, overview: string, poster_path: string|null, backdrop_path: string|null, release_date: string, vote_average: float, vote_count: int}> Search results
+     */
     public function search(string $query, array $options = []): array
     {
         $language = $options['language'] ?? 'en-US';
@@ -49,10 +80,17 @@ class TmdbProvider implements MetadataProviderInterface
         }, $response['results']);
     }
 
+    /**
+     * Get detailed movie information from TMDB.
+     *
+     * @param string $externalId TMDB movie ID
+     * @param array<string, mixed> $options Options (language)
+     * @return array<string, mixed> Movie details including name, overview, year, genres, actors, director
+     */
     public function getDetails(string $externalId, array $options = []): array
     {
         $language = $options['language'] ?? 'en-US';
-        
+
         $response = $this->http->get("/movie/{$externalId}", [
             'language' => $language,
             'append_to_response' => 'credits,genres,production_companies',
@@ -65,6 +103,12 @@ class TmdbProvider implements MetadataProviderInterface
         return $this->formatMovieDetails($response);
     }
 
+    /**
+     * Get movie images (posters, backdrops, logos) from TMDB.
+     *
+     * @param string $externalId TMDB movie ID
+     * @return array<string, array<int, array{url: string, url_original: string, width: int, height: int, language: string|null}>> Images by type
+     */
     public function getImages(string $externalId): array
     {
         $response = $this->http->get("/movie/{$externalId}/images");
@@ -80,11 +124,22 @@ class TmdbProvider implements MetadataProviderInterface
         ];
     }
 
+    /**
+     * Get provider name aliases.
+     *
+     * @return array<string> Provider names ['tmdb']
+     */
     public function getProviders(): array
     {
         return ['tmdb'];
     }
 
+    /**
+     * Format TMDB API response into standard movie details structure.
+     *
+     * @param array<string, mixed> $data Raw TMDB API response
+     * @return array<string, mixed> Formatted movie details
+     */
     private function formatMovieDetails(array $data): array
     {
         return [
@@ -112,6 +167,12 @@ class TmdbProvider implements MetadataProviderInterface
         ];
     }
 
+    /**
+     * Find the director from a list of crew members.
+     *
+     * @param array<int, array<string, mixed>> $crew Crew members from TMDB API
+     * @return string|null Director name or null if not found
+     */
     private function findDirector(array $crew): ?string
     {
         foreach ($crew as $member) {
@@ -122,6 +183,12 @@ class TmdbProvider implements MetadataProviderInterface
         return null;
     }
 
+    /**
+     * Format image list with full URLs.
+     *
+     * @param array<int, array<string, mixed>> $images Raw image data from TMDB
+     * @return array<int, array{url: string, url_original: string, width: int, height: int, language: string|null}> Formatted images
+     */
     private function formatImages(array $images): array
     {
         return array_map(function ($image) {

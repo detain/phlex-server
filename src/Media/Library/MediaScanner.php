@@ -1,18 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlex\Media\Library;
 
 use Phlex\Common\Logger\LogChannels;
 use Phlex\Common\Logger\StructuredLogger;
 use Workerman\MySQL\Connection;
+use SplFileInfo;
 
+/**
+ * MediaScanner discovers and indexes media files from filesystem directories.
+ *
+ * This class recursively scans directories to find media files matching supported
+ * extensions, parses naming conventions to extract metadata (year, season, episode),
+ * and creates media items in the repository. It handles deduplication by checking
+ * if files have already been scanned.
+ *
+ * @author Phlex Development Team
+ * @version 1.0.0
+ * @description Filesystem scanner for discovering and indexing media files
+ * @see ItemRepository For media item persistence
+ * @see FolderWatcher For change detection
+ */
 class MediaScanner
 {
+    /** @var StructuredLogger|null Logger instance for structured logging */
     private ?StructuredLogger $logger = null;
+
+    /** @var Connection Database connection */
     private Connection $db;
+
+    /** @var array<string, array<string>> File extensions by media type */
     private array $namingOptions;
+
+    /** @var ItemRepository Repository for media item persistence */
     private ItemRepository $itemRepository;
 
+    /**
+     * Constructor for MediaScanner.
+     *
+     * @param Connection $db Database connection for media item persistence
+     * @param ItemRepository $itemRepository Repository for media item operations
+     * @param StructuredLogger|null $logger Optional custom logger, creates default if not provided
+     */
     public function __construct(Connection $db, ItemRepository $itemRepository, ?StructuredLogger $logger = null)
     {
         $this->db = $db;
@@ -21,6 +52,11 @@ class MediaScanner
         $this->namingOptions = $this->loadNamingOptions();
     }
 
+    /**
+     * Creates a default structured logger for the scanner subsystem.
+     *
+     * @return StructuredLogger A configured logger instance writing to temp directory
+     */
     private function createDefaultLogger(): StructuredLogger
     {
         $tempDir = sys_get_temp_dir() . '/phlex_media_' . uniqid();
@@ -44,6 +80,11 @@ class MediaScanner
         return new StructuredLogger(LogChannels::MEDIA, $config);
     }
 
+    /**
+     * Loads supported file extensions by media type.
+     *
+     * @return array<string, array<string>> Media type to extension list mapping
+     */
     private function loadNamingOptions(): array
     {
         return [
@@ -53,6 +94,23 @@ class MediaScanner
         ];
     }
 
+    /**
+     * Scans a directory for media files and creates items in the repository.
+     *
+     * Recursively iterates through all files in the given path, filters by
+     * supported extensions for the media type, skips hidden/system files,
+     * and creates media items for discovered files.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param string $path Filesystem path to scan
+     * @param string $type Media type ('video', 'audio', 'image')
+     * @return void
+     *
+     * @example
+     * ```php
+     * $scanner->scan('library-123', '/mnt/media/movies', 'video');
+     * ```
+     */
     public function scan(string $libraryId, string $path, string $type): void
     {
         if (!is_dir($path)) {
@@ -98,6 +156,12 @@ class MediaScanner
         ]);
     }
 
+    /**
+     * Determines if a file should be skipped during scanning.
+     *
+     * @param string $filename The filename to check
+     * @return bool True if the file should be skipped
+     */
     private function shouldSkipFile(string $filename): bool
     {
         // Skip hidden files
@@ -116,7 +180,15 @@ class MediaScanner
         return false;
     }
 
-    private function processFile(string $libraryId, \SplFileInfo $file, string $type): void
+    /**
+     * Processes a single media file and creates a media item.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param SplFileInfo $file The file to process
+     * @param string $type The media type
+     * @return void
+     */
+    private function processFile(string $libraryId, SplFileInfo $file, string $type): void
     {
         $path = $file->getPathname();
 
@@ -148,7 +220,14 @@ class MediaScanner
         ]);
     }
 
-    private function determineMediaType(\SplFileInfo $file, string $libraryType): string
+    /**
+     * Determines the specific media type from file and library type.
+     *
+     * @param SplFileInfo $file The file info
+     * @param string $libraryType The library type ('video', 'audio', 'image')
+     * @return string The specific media type ('movie', 'episode', 'track', etc.)
+     */
+    private function determineMediaType(SplFileInfo $file, string $libraryType): string
     {
         if ($libraryType !== 'video') {
             return $libraryType;
@@ -158,6 +237,17 @@ class MediaScanner
         return 'movie';
     }
 
+    /**
+     * Parses filename to extract metadata based on naming conventions.
+     *
+     * Supports:
+     * - Movies: "Movie Name (Year)" or "Movie Name.Year"
+     * - Series: "Series S01E01" or "Series - S01E01 - Episode Title"
+     *
+     * @param string $filename The filename to parse (without path)
+     * @param string $type The media type
+     * @return array<string, mixed> Extracted metadata (name, year, season, episode, episode_title)
+     */
     private function parseNaming(string $filename, string $type): array
     {
         $metadata = [];

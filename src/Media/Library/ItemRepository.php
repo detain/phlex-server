@@ -1,18 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phlex\Media\Library;
 
 use Workerman\MySQL\Connection;
 
+/**
+ * ItemRepository provides data access for media items in the database.
+ *
+ * This repository handles all CRUD operations for media_items and media_streams
+ * tables, including querying, searching, filtering by content ratings and genres,
+ * and stream management.
+ *
+ * @author Phlex Development Team
+ * @version 1.0.0
+ * @description Data access layer for media items with content filtering support
+ * @see LibraryManager For library-level operations
+ */
 class ItemRepository
 {
+    /** @var Connection Database connection */
     private Connection $db;
 
+    /**
+     * Constructor for ItemRepository.
+     *
+     * @param Connection $db Database connection for media item persistence
+     */
     public function __construct(Connection $db)
     {
         $this->db = $db;
     }
 
+    /**
+     * Finds a media item by its unique identifier.
+     *
+     * @param string $id The media item's unique identifier
+     * @return array<string, mixed>|null The hydrated media item array or null if not found
+     */
     public function findById(string $id): ?array
     {
         $result = $this->db->query(
@@ -27,6 +53,12 @@ class ItemRepository
         return $this->hydrateItem($result[0]);
     }
 
+    /**
+     * Finds a media item by its filesystem path.
+     *
+     * @param string $path The absolute filesystem path to the media file
+     * @return array<string, mixed>|null The hydrated media item array or null if not found
+     */
     public function findByPath(string $path): ?array
     {
         $result = $this->db->query(
@@ -41,6 +73,12 @@ class ItemRepository
         return $this->hydrateItem($result[0]);
     }
 
+    /**
+     * Finds all child items of a parent media item.
+     *
+     * @param string $parentId The parent media item's unique identifier
+     * @return array<int, array<string, mixed>> Array of hydrated child media items ordered by name
+     */
     public function findByParent(string $parentId): array
     {
         $results = $this->db->query(
@@ -51,6 +89,15 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Gets media items by type within a library with pagination.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param string $type The media type filter (e.g., 'movie', 'series', 'audio')
+     * @param int $limit Maximum number of items to return
+     * @param int $offset Number of items to skip for pagination
+     * @return array<int, array<string, mixed>> Array of hydrated media items
+     */
     public function getByType(string $libraryId, string $type, int $limit = 100, int $offset = 0): array
     {
         $results = $this->db->query(
@@ -61,6 +108,14 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Gets all media items within a library with pagination.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param int $limit Maximum number of items to return
+     * @param int $offset Number of items to skip for pagination
+     * @return array<int, array<string, mixed>> Array of hydrated media items
+     */
     public function getByLibrary(string $libraryId, int $limit = 100, int $offset = 0): array
     {
         $results = $this->db->query(
@@ -71,6 +126,13 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Performs full-text search on media item names.
+     *
+     * @param string $query The search query for full-text matching
+     * @param int $limit Maximum number of results to return
+     * @return array<int, array<string, mixed>> Array of hydrated media items matching the query
+     */
     public function search(string $query, int $limit = 50): array
     {
         $results = $this->db->query(
@@ -81,6 +143,13 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Performs fuzzy/partial string matching on media item names.
+     *
+     * @param string $query The partial string to search for
+     * @param int $limit Maximum number of results to return
+     * @return array<int, array<string, mixed>> Array of hydrated media items matching the query
+     */
     public function searchFuzzy(string $query, int $limit = 50): array
     {
         $escapedQuery = '%' . addcslashes($query, '%_') . '%';
@@ -92,6 +161,13 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Creates a new media item in the database.
+     *
+     * @param array<string, mixed> $data Media item data including library_id, name, type, path, and optionally metadata_json
+     * @return string The unique identifier of the created media item
+     * @throws \InvalidArgumentException If required fields are missing
+     */
     public function create(array $data): string
     {
         $id = $data['id'] ?? $this->generateUuid();
@@ -116,6 +192,13 @@ class ItemRepository
         return $id;
     }
 
+    /**
+     * Updates an existing media item's properties.
+     *
+     * @param string $id The media item's unique identifier
+     * @param array<string, mixed> $data Associative array of fields to update
+     * @return void
+     */
     public function update(string $id, array $data): void
     {
         $sets = [];
@@ -141,16 +224,35 @@ class ItemRepository
         );
     }
 
+    /**
+     * Deletes a media item by its identifier.
+     *
+     * @param string $id The media item's unique identifier
+     * @return void
+     */
     public function delete(string $id): void
     {
         $this->db->query("DELETE FROM media_items WHERE id = ?", [$id]);
     }
 
+    /**
+     * Deletes all media items belonging to a specific library.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @return void
+     */
     public function deleteByLibrary(string $libraryId): void
     {
         $this->db->query("DELETE FROM media_items WHERE library_id = ?", [$libraryId]);
     }
 
+    /**
+     * Counts media items of a specific type within a library.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param string $type The media type to count
+     * @return int The number of items matching the criteria
+     */
     public function countByType(string $libraryId, string $type): int
     {
         $result = $this->db->query(
@@ -161,6 +263,13 @@ class ItemRepository
         return (int)($result[0]['count'] ?? 0);
     }
 
+    /**
+     * Gets recently added media items from a library.
+     *
+     * @param string $libraryId The library's unique identifier
+     * @param int $limit Maximum number of items to return
+     * @return array<int, array<string, mixed>> Array of recently added hydrated media items
+     */
     public function getRecentlyAdded(string $libraryId, int $limit = 20): array
     {
         $results = $this->db->query(
@@ -171,6 +280,12 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Gets all streams associated with a media item.
+     *
+     * @param string $itemId The media item's unique identifier
+     * @return array<int, array<string, mixed>> Array of stream data arrays
+     */
     public function getItemStreams(string $itemId): array
     {
         return $this->db->query(
@@ -179,6 +294,13 @@ class ItemRepository
         );
     }
 
+    /**
+     * Adds a stream to a media item.
+     *
+     * @param string $itemId The media item's unique identifier
+     * @param array<string, mixed> $streamData Stream data including stream_index, stream_type, codec, etc.
+     * @return string The unique identifier of the created stream
+     */
     public function addStream(string $itemId, array $streamData): string
     {
         $id = $streamData['id'] ?? $this->generateUuid();
@@ -202,6 +324,12 @@ class ItemRepository
         return $id;
     }
 
+    /**
+     * Batch creates multiple media items.
+     *
+     * @param array<int, array<string, mixed>> $items Array of media item data arrays
+     * @return array<string> Array of created media item identifiers
+     */
     public function batchCreate(array $items): array
     {
         $ids = [];
@@ -214,7 +342,9 @@ class ItemRepository
     }
 
     /**
-     * Content rating order (least to most restrictive)
+     * Content rating order mapping from least to most restrictive.
+     *
+     * @var array<string, int> Rating string to numeric order mapping
      */
     public const RATING_ORDER = [
         'G' => 1,
@@ -227,13 +357,13 @@ class ItemRepository
     ];
 
     /**
-     * Get items filtered by allowed content ratings
+     * Get items filtered by allowed content ratings.
      *
      * @param string $libraryId Library to filter
-     * @param array $allowedRatings Array of allowed rating strings
+     * @param array<string> $allowedRatings Array of allowed rating strings (e.g., ['G', 'PG'])
      * @param int $limit Max items to return
      * @param int $offset Pagination offset
-     * @return array Filtered media items
+     * @return array<int, array<string, mixed>> Filtered media items ordered by rating restriction level
      */
     public function getByAllowedRatings(string $libraryId, array $allowedRatings, int $limit = 100, int $offset = 0): array
     {
@@ -263,13 +393,13 @@ class ItemRepository
     }
 
     /**
-     * Get items filtered by a maximum content rating
+     * Get items filtered by a maximum content rating.
      *
      * @param string $libraryId Library to filter
-     * @param string $maxRating Maximum allowed rating
+     * @param string $maxRating Maximum allowed rating (e.g., 'R' excludes NC-17 and X)
      * @param int $limit Max items to return
      * @param int $offset Pagination offset
-     * @return array Filtered media items
+     * @return array<int, array<string, mixed>> Filtered media items
      */
     public function getByMaxRating(string $libraryId, string $maxRating, int $limit = 100, int $offset = 0): array
     {
@@ -287,11 +417,11 @@ class ItemRepository
     }
 
     /**
-     * Check if a media item's rating is allowed
+     * Check if a media item's rating is within allowed ratings.
      *
-     * @param string $itemId Media item ID
-     * @param array $allowedRatings Array of allowed rating strings
-     * @return bool True if rating is allowed
+     * @param string $itemId Media item ID to check
+     * @param array<string> $allowedRatings Array of allowed rating strings
+     * @return bool True if rating is allowed or item not found (safe default)
      */
     public function isRatingAllowed(string $itemId, array $allowedRatings): bool
     {
@@ -310,13 +440,13 @@ class ItemRepository
     }
 
     /**
-     * Get items filtered by allowed genres
+     * Get items filtered by allowed genres.
      *
      * @param string $libraryId Library to filter
-     * @param array $allowedGenres Array of allowed genre strings
+     * @param array<string> $allowedGenres Array of allowed genre strings
      * @param int $limit Max items to return
      * @param int $offset Pagination offset
-     * @return array Filtered media items
+     * @return array<int, array<string, mixed>> Filtered media items
      */
     public function getByAllowedGenres(string $libraryId, array $allowedGenres, int $limit = 100, int $offset = 0): array
     {
@@ -343,13 +473,13 @@ class ItemRepository
     }
 
     /**
-     * Get items excluding blocked genres
+     * Get items excluding blocked genres.
      *
      * @param string $libraryId Library to filter
-     * @param array $blockedGenres Array of blocked genre strings
+     * @param array<string> $blockedGenres Array of blocked genre strings
      * @param int $limit Max items to return
      * @param int $offset Pagination offset
-     * @return array Filtered media items
+     * @return array<int, array<string, mixed>> Filtered media items
      */
     public function getExcludingGenres(string $libraryId, array $blockedGenres, int $limit = 100, int $offset = 0): array
     {
@@ -371,6 +501,12 @@ class ItemRepository
         return array_map(fn($r) => $this->hydrateItem($r), $results);
     }
 
+    /**
+     * Hydrates a database row with decoded metadata.
+     *
+     * @param array<string, mixed> $row Database row with metadata_json field
+     * @return array<string, mixed> Row with added 'metadata' key containing decoded JSON
+     */
     private function hydrateItem(array $row): array
     {
         $row['metadata_json'] = $row['metadata_json'] ?? '{}';
@@ -382,6 +518,11 @@ class ItemRepository
         return $row;
     }
 
+    /**
+     * Generates a v4 UUID for media item and stream identifiers.
+     *
+     * @return string A formatted UUID string (xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx)
+     */
     private function generateUuid(): string
     {
         return sprintf(

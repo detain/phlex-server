@@ -153,6 +153,284 @@ interface ConnectionInterface
 
 ---
 
+## Media Library Architecture
+
+The Media Library system manages media files, metadata fetching, and streaming.
+
+### Component Overview
+
+```
+src/Media/
+├── Library/
+│   ├── LibraryManager.php    # Library CRUD and scan coordination
+│   ├── ItemRepository.php    # Media item data access with content filtering
+│   ├── MediaScanner.php      # Filesystem scanning and parsing
+│   └── FolderWatcher.php      # Directory change detection
+├── Metadata/
+│   ├── MetadataManager.php  # Provider coordination and refresh
+│   ├── MetadataProviderInterface.php  # Provider contract
+│   ├── MetadataHttpClient.php # HTTP client with caching
+│   ├── TmdbProvider.php      # TMDB movie metadata
+│   ├── TvdbProvider.php      # TVDB series metadata
+│   ├── FanartProvider.php    # Fanart.tv artwork
+│   └── LocalNfoProvider.php   # Local NFO file parsing
+├── Transcoding/
+│   ├── TranscodeManager.php   # Transcoding job management
+│   ├── FfmpegRunner.php      # FFmpeg process execution
+│   └── EncodingHelper.php    # Encoding profile definitions
+└── Streaming/
+    ├── StreamManager.php     # Stream session management
+    ├── HlsStreamer.php       # HLS segment generation
+    ├── StreamState.php       # Playback state tracking
+    └── QualitySelector.php   # Quality profile selection
+```
+
+### Library Manager (`LibraryManager`)
+
+The `LibraryManager` is the main interface for library operations:
+
+```php
+// Create a new library
+$libraryId = $libraryManager->createLibrary('Movies', 'video', ['/mnt/media/movies']);
+
+// Get library with decoded paths/options
+$library = $libraryManager->getLibrary($libraryId);
+// Returns: ['id' => '...', 'name' => 'Movies', 'type' => 'video', 'paths' => ['/mnt/media/movies'], 'options' => [...]]
+
+// Update library properties
+$libraryManager->updateLibrary($libraryId, ['name' => 'My Movies']);
+
+// Scan library for new files
+$libraryManager->scanLibrary($libraryId);
+
+// Rescan (clear existing items first)
+$libraryManager->rescanLibrary($libraryId);
+
+// Delete library
+$libraryManager->deleteLibrary($libraryId);
+```
+
+### Item Repository (`ItemRepository`)
+
+The `ItemRepository` provides comprehensive data access for media items:
+
+```php
+// Basic queries
+$item = $itemRepository->findById('item-123');
+$item = $itemRepository->findByPath('/mnt/media/movie.mkv');
+$children = $itemRepository->findByParent('parent-id');
+
+// Filtering
+$movies = $itemRepository->getByType($libraryId, 'movie', 100, 0);
+$recent = $itemRepository->getRecentlyAdded($libraryId, 20);
+
+// Searching
+$results = $itemRepository->search('action movie');  // Full-text
+$fuzzy = $itemRepository->searchFuzzy('action');       // LIKE pattern
+
+// Content rating filtering
+$safe = $itemRepository->getByMaxRating($libraryId, 'PG-13');
+
+// Genre filtering
+$action = $itemRepository->getByAllowedGenres($libraryId, ['Action', 'Adventure']);
+$noKids = $itemRepository->getExcludingGenres($libraryId, ['Horror']);
+
+// Streaming
+$streams = $itemRepository->getItemStreams('item-123');
+$itemRepository->addStream('item-123', ['stream_index' => 0, 'stream_type' => 'video', 'codec' => 'h264']);
+```
+
+### Media Scanner (`MediaScanner`)
+
+The `MediaScanner` discovers files from filesystem directories:
+
+```php
+$scanner->scan($libraryId, '/mnt/media/movies', 'video');
+```
+
+Supported file extensions by type:
+- **video**: mkv, mp4, avi, mov, wmv, flv, webm, m4v, mpg, mpeg, ts
+- **audio**: mp3, flac, aac, ogg, wav, m4a, wma, alac, opus
+- **image**: jpg, jpeg, png, gif, bmp, webp, tiff, tif
+
+Naming convention parsing:
+- **Movies**: `Movie Name (2024)` or `Movie.Name.2024`
+- **Series**: `Series S01E01` or `Series - S01E01 - Episode Title`
+
+### Folder Watcher (`FolderWatcher`)
+
+The `FolderWatcher` detects filesystem changes via checksum comparison:
+
+```php
+// Start watching paths
+$watcher->watch($libraryId, ['/mnt/media/movies']);
+
+// Check for changes (call periodically)
+$changes = $watcher->checkForChanges();
+foreach ($changes as $change) {
+    echo "Change in {$change['path']} for library {$change['library_id']}";
+}
+
+// Stop watching
+$watcher->unwatch($libraryId);
+```
+
+---
+
+## Metadata Fetching System
+
+### Metadata Manager (`MetadataManager`)
+
+The `MetadataManager` coordinates metadata fetching from multiple providers:
+
+```php
+// Register providers
+$manager->registerProvider('tmdb', new TmdbProvider($apiKey), ['movie']);
+$manager->registerProvider('tvdb', new TvdbProvider($apiKey), ['series', 'episode']);
+$manager->registerProvider('fanart', new FanartProvider($apiKey), ['series']);
+$manager->registerProvider('local', new LocalNfoProvider('/mnt/media'), ['movie', 'series', 'episode']);
+
+// Set priority (optional)
+$manager->setProviderPriority('movie', ['local', 'tmdb', 'fanart']);
+
+// Refresh single item
+$success = $manager->refreshItemMetadata('item-123', force: false);
+
+// Refresh entire library with progress
+$refreshed = $manager->refreshLibraryMetadata($libraryId, function($current, $total) {
+    echo "Progress: $current/$total\n";
+});
+```
+
+### Provider Priority
+
+Default provider priority by media type:
+- **movie**: `['tmdb', 'local']`
+- **series**: `['tvdb', 'fanart', 'local']`
+- **episode**: `['tvdb', 'local']`
+- **artist**: `['musicbrainz', 'local']`
+- **album**: `['musicbrainz', 'local']`
+
+### Metadata Provider Interface
+
+All providers implement `MetadataProviderInterface`:
+
+```php
+interface MetadataProviderInterface
+{
+    // Search for media by query
+    public function search(string $query, array $options = []): array;
+
+    // Get detailed metadata
+    public function getDetails(string $externalId, array $options = []): array;
+
+    // Get images (posters, backdrops, etc.)
+    public function getImages(string $externalId): array;
+
+    // Get provider name aliases
+    public function getProviders(): array;
+}
+```
+
+### TMDB Provider (`TmdbProvider`)
+
+Movie metadata from The Movie Database:
+
+```php
+$provider = new TmdbProvider($apiKey);
+
+// Search movies
+$results = $provider->search('The Matrix', ['language' => 'en-US']);
+
+// Get details
+$details = $provider->getDetails('603'); // TMDB movie ID
+// Returns: name, overview, year, genres, actors, director, runtime_ticks, etc.
+
+// Get images
+$images = $provider->getImages('603');
+// Returns: ['posters' => [...], 'backdrops' => [...], 'logos' => [...]]
+```
+
+### TVDB Provider (`TvdbProvider`)
+
+TV series metadata from TheTVDB:
+
+```php
+$provider = new TvdbProvider($apiKey, 'eng');
+
+// Search series
+$results = $provider->search('Breaking Bad');
+
+// Get series details
+$details = $provider->getDetails('81179'); // TVDB series ID
+// Returns: name, overview, year, genres, actors, episodes, season_count, etc.
+
+// Get episode
+$episode = $provider->getEpisode('81179', 5, 16); // series ID, season, episode
+```
+
+### Fanart Provider (`FanartProvider`)
+
+Artwork from Fanart.tv:
+
+```php
+$provider = new FanartProvider($apiKey);
+
+// Get TV show artwork
+$images = $provider->getTvShowImages($tvdbId);
+// Returns: ['posters' => [...], 'banners' => [...], 'season_posters' => [...], ...]
+
+// Get movie artwork
+$images = $provider->getMovieImages($imdbId);
+```
+
+### Local NFO Provider (`LocalNfoProvider`)
+
+Local NFO file parser (XBMC/Kodi format):
+
+```php
+$provider = new LocalNfoProvider('/mnt/media');
+
+// Parse movie NFO
+$details = $provider->parseMovieNfo('/mnt/media/movie.nfo');
+
+// Parse TV show NFO
+$details = $provider->parseTvShowNfo('/mnt/media/tvshow.nfo');
+
+// Auto-detect and parse directory
+$result = $provider->parseDirectory('/mnt/media/MovieName');
+// Returns: ['type' => 'movie'|'tvshow', 'metadata' => [...]]
+```
+
+### Metadata Structure
+
+Metadata is stored as JSON in the `metadata_json` column:
+
+```json
+{
+    "name": "Movie Title",
+    "year": 2024,
+    "rating": "PG-13",
+    "genres": ["Action", "Adventure"],
+    "external_ids": {
+        "tmdb": "12345",
+        "imdb": "tt1234567"
+    },
+    "details": {
+        "tmdb": { "overview": "...", "runtime_ticks": 720000000000 },
+        "local": { "plot": "..." }
+    },
+    "images": {
+        "tmdb": { "posters": [...], "backdrops": [...] },
+        "fanart": { "banners": [...], "logos": [...] }
+    },
+    "metadata_refreshed_at": "2024-01-15T10:30:00+00:00",
+    "metadata_provider": "tmdb"
+}
+```
+
+---
+
 ## Coding Standards
 
 ### PSR-12 Compliance
