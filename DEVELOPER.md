@@ -1042,6 +1042,174 @@ $result = $provider->parseDirectory('/mnt/media/MovieName');
 // Returns: ['type' => 'movie'|'tvshow', 'metadata' => [...]]
 ```
 
+### Metadata HTTP Client (`MetadataHttpClient`)
+
+Shared HTTP client with caching for all metadata providers:
+
+```php
+$client = new MetadataHttpClient(
+    'https://api.themoviedb.org/3',
+    'your-api-key',
+    10  // timeout in seconds
+);
+
+// GET request with automatic caching
+$response = $client->get('/search/movie', ['query' => 'The Matrix']);
+
+// Clear cache when needed
+$client->clearCache();
+```
+
+### Provider Interface Contract
+
+All metadata providers implement `MetadataProviderInterface`:
+
+```php
+interface MetadataProviderInterface
+{
+    // Search for media by query string
+    // Returns: array<int, array{id: string, title: string, overview?: string, ...}>
+    public function search(string $query, array $options = []): array;
+
+    // Get detailed metadata for a specific external ID
+    // Returns: array<string, mixed> with name, overview, year, genres, actors, etc.
+    public function getDetails(string $externalId, array $options = []): array;
+
+    // Get images (posters, backdrops, banners) for an external ID
+    // Returns: array<string, array<int, array{url: string, width?: int, height?: int}>>
+    public function getImages(string $externalId): array;
+
+    // Get the provider names this implementation handles
+    // Returns: array<string> e.g., ['tmdb'] or ['tvdb', 'thetvdb']
+    public function getProviders(): array;
+}
+```
+
+### Response Format Specifications
+
+#### Search Response Format
+```php
+[
+    'id' => '603',                    // Provider-specific ID (string)
+    'title' => 'The Matrix',          // Primary title
+    'original_title' => 'The Matrix', // Original language title
+    'overview' => 'A computer...',   // Description/synopsis
+    'poster_path' => '/path/to.jpg', // Poster image path (may be null)
+    'backdrop_path' => '/path/to.jpg', // Backdrop image path (movies only)
+    'first_aired' => '1999-03-31',   // Release date (YYYY-MM-DD)
+    'vote_average' => 8.2,          // Average rating (TMDB)
+    'vote_count' => 12000,          // Number of votes
+]
+```
+
+#### Details Response Format
+```php
+[
+    'name' => 'The Matrix',                    // Display name
+    'original_name' => 'The Matrix',           // Original title
+    'overview' => 'A computer hacker...',     // Full description
+    'year' => 1999,                           // Release year (int)
+    'first_aired' => '1999-03-31',           // Release date
+    'premiered' => '1999-03-31',             // Premier date
+    'rating' => 8.7,                         // Content rating (TVDB)
+    'official_rating' => 'R',               // MPAA rating
+    'vote_average' => 8.2,                   // TMDB vote average
+    'vote_count' => 12000,                  // Vote count
+    'runtime' => 136,                       // Runtime in minutes
+    'runtime_ticks' => 816000000000,        // Runtime in 100-nanosecond ticks
+    'mpaa' => 'R',                           // MPAA rating (movies)
+    'tagline' => 'The fight for the future', // Movie tagline
+    'status' => 'Ended',                     // Series status (TV shows)
+    'episode_run_time' => 45,               // Episode runtime (TV shows)
+    'genre' => ['Action', 'Sci-Fi'],        // Genres (TVDB pipe-separated parsed)
+    'genres' => ['Action', 'Sci-Fi'],        // Genres (TMDB array format)
+    'genre' => ['Action', 'Sci-Fi'],        // Genres (array)
+    'studio' => 'Warner Bros.',            // Production studio
+    'studios' => ['Warner Bros.'],          // Studios array
+    'budget' => 63000000,                   // Movie budget (TMDB)
+    'revenue' => 466000000,                // Movie revenue (TMDB)
+    'imdb_id' => 'tt0133093',              // IMDB ID
+    'tmdb_id' => 603,                       // TMDB ID
+    'tvdb_id' => 81179,                    // TVDB ID
+    'actors' => [                           // Cast members
+        ['name' => 'Keanu Reeves', 'role' => 'Neo', 'order' => 0],
+        ['name' => 'Laurence Fishburne', 'role' => 'Morpheus', 'order' => 1],
+    ],
+    'director' => 'The Wachowskis',        // Director name (TMDB)
+    'directors' => ['The Wachowskis'],     // Directors array (NFO)
+    'credits' => ['The Wachowskis'],       // Writers (NFO)
+    'episodes' => [                        // TV show episodes
+        ['id' => '1234', 'name' => 'Pilot', 'season_number' => 1, 'episode_number' => 1, ...]
+    ],
+    'episode_count' => 100,               // Total episode count
+    'season_count' => 4,                  // Season count
+    'external_ids' => [                    // External provider IDs
+        'tmdb' => '603',
+        'imdb' => 'tt0133093',
+    ],
+]
+```
+
+#### Images Response Format
+```php
+[
+    'posters' => [                          // Poster images
+        [
+            'url' => 'https://image.tmdb.org/t/p/w500/abc.jpg',
+            'url_original' => 'https://image.tmdb.org/t/p/original/abc.jpg',
+            'width' => 1000,
+            'height' => 1500,
+            'language' => 'en',             // ISO 639-1 language code (may be null)
+            'rating' => 5.2,               // Fanart.tv rating (may be null)
+            'likes' => 100,                // Fanart.tv likes count
+            'type' => 'poster',            // Image type
+            'filename' => 'poster.jpg',    // Local NFO filename (local provider only)
+        ]
+    ],
+    'backdrops' => [...],                  // Background images
+    'logos' => [...],                      // Logo/clear art images
+    'banners' => [...],                    // Banner images (TVDB, Fanart.tv)
+    'thumbs' => [...],                     // Thumbnail images
+    'season_posters' => [...],            // Season-specific posters
+    'season_thumbs' => [...],             // Season thumbnails
+    'hd_logos' => [...],                  // HD logo overlays (Fanart.tv)
+    'clear_arts' => [...],                // Clear art overlays (Fanart.tv)
+]
+```
+
+### Caching Strategy
+
+Metadata providers use multiple caching layers:
+
+| Layer | Duration | Purpose |
+|-------|----------|---------|
+| In-memory | Request lifecycle | Avoid duplicate API calls within same request |
+| HTTP Client cache | Request lifecycle | MetadataHttpClient instance caching |
+| Database | 24 hours (configurable) | Persistent metadata storage per item |
+
+**Cache Invalidation:**
+- Force refresh: `$manager->refreshItemMetadata($itemId, force: true)`
+- Direct database update via `metadata_json` column
+- Library rescan clears and rebuilds metadata
+
+### Error Handling
+
+All providers return empty arrays on failure:
+```php
+// These all return [] on error
+$provider->search('query');      // Network failure, API error
+$provider->getDetails('123');    // Invalid ID, API error
+$provider->getImages('123');      // No images found, API error
+```
+
+The MetadataManager implements cascading fallback:
+```php
+// If TMDB fails, try next provider in priority
+$manager->setProviderPriority('movie', ['tmdb', 'local']);
+$success = $manager->refreshItemMetadata($itemId);
+// Tries TMDB first, falls back to local NFO if TMDB fails
+```
+
 ### Metadata Structure
 
 Metadata is stored as JSON in the `metadata_json` column:
