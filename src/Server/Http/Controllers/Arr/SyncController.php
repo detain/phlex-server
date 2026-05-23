@@ -43,12 +43,34 @@ class SyncController
     }
 
     /**
+     * Require authentication for the request.
+     */
+    private function requireAuth(Request $request): ?Response
+    {
+        $userId = $request->userId;
+        if ($userId === null || $userId === '') {
+            return (new Response())->status(401)->json([
+                'error' => 'Unauthorized',
+                'code' => 'auth.required',
+            ]);
+        }
+        return null;
+    }
+
+    /**
      * Require admin access for the request.
      */
-    private function requireAdmin(): ?Response
+    private function requireAdmin(Request $request): ?Response
     {
+        // First require auth
+        $authResponse = $this->requireAuth($request);
+        if ($authResponse !== null) {
+            return $authResponse;
+        }
+
+        // Then check admin status
         if ($this->adminMiddleware !== null) {
-            $status = $this->adminMiddleware->checkAdminAccess();
+            $status = $this->adminMiddleware->checkAccess($request);
             if ($status !== null) {
                 return (new Response())->status($status)->json([
                     'error' => $status === 401 ? 'Unauthorized' : 'Forbidden',
@@ -56,6 +78,7 @@ class SyncController
                 ]);
             }
         }
+
         return null;
     }
 
@@ -72,7 +95,7 @@ class SyncController
      */
     public function triggerSync(Request $request, array $params): Response
     {
-        $authResponse = $this->requireAdmin();
+        $authResponse = $this->requireAdmin($request);
         if ($authResponse !== null) {
             return $authResponse;
         }
@@ -121,7 +144,7 @@ class SyncController
      */
     public function getSyncStatus(Request $request, array $params): Response
     {
-        $authResponse = $this->requireAdmin();
+        $authResponse = $this->requireAdmin($request);
         if ($authResponse !== null) {
             return $authResponse;
         }
@@ -153,7 +176,7 @@ class SyncController
      */
     public function setEnabled(Request $request, array $params): Response
     {
-        $authResponse = $this->requireAdmin();
+        $authResponse = $this->requireAdmin($request);
         if ($authResponse !== null) {
             return $authResponse;
         }
