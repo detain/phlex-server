@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Phlix\Server\Http\Controllers\Arr;
 
+use Phlix\Common\Logger\LogChannels;
+use Phlix\Common\Logger\LoggerFactory;
 use Phlix\Server\Arr\CustomFormatSyncer;
+use Phlix\Server\Http\Middleware\AdminMiddleware;
 use Phlix\Server\Http\Request;
 use Phlix\Server\Http\Response;
 
@@ -19,6 +22,8 @@ use Phlix\Server\Http\Response;
  */
 class SyncController
 {
+    private ?AdminMiddleware $adminMiddleware = null;
+
     /**
      * Creates a new SyncController instance.
      *
@@ -27,6 +32,31 @@ class SyncController
     public function __construct(
         private readonly CustomFormatSyncer $syncer
     ) {
+    }
+
+    /**
+     * Set the admin middleware (used for admin-only operations).
+     */
+    public function setAdminMiddleware(AdminMiddleware $middleware): void
+    {
+        $this->adminMiddleware = $middleware;
+    }
+
+    /**
+     * Require admin access for the request.
+     */
+    private function requireAdmin(): ?Response
+    {
+        if ($this->adminMiddleware !== null) {
+            $status = $this->adminMiddleware->checkAdminAccess();
+            if ($status !== null) {
+                return (new Response())->status($status)->json([
+                    'error' => $status === 401 ? 'Unauthorized' : 'Forbidden',
+                    'code' => $status === 401 ? 'auth.required' : 'auth.not_admin',
+                ]);
+            }
+        }
+        return null;
     }
 
     /**
@@ -42,6 +72,11 @@ class SyncController
      */
     public function triggerSync(Request $request, array $params): Response
     {
+        $authResponse = $this->requireAdmin();
+        if ($authResponse !== null) {
+            return $authResponse;
+        }
+
         try {
             $result = $this->syncer->syncAll();
 
@@ -51,9 +86,22 @@ class SyncController
                 'data' => $result->toArray(),
             ]);
         } catch (\Throwable $e) {
+            // Log the full exception internally but return a generic message
+            try {
+                $logger = LoggerFactory::get(LogChannels::APPLICATION);
+                $logger->error('TRaSH-Guides sync failed', [
+                    'exception' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]);
+            } catch (\Throwable) {
+                // Logging failed - silently continue
+            }
+
             return (new Response())->status(500)->json([
                 'success' => false,
-                'error' => 'Sync failed: ' . $e->getMessage(),
+                'error' => 'Sync failed',
             ]);
         }
     }
@@ -73,6 +121,11 @@ class SyncController
      */
     public function getSyncStatus(Request $request, array $params): Response
     {
+        $authResponse = $this->requireAdmin();
+        if ($authResponse !== null) {
+            return $authResponse;
+        }
+
         $lastSyncTime = $this->syncer->getLastSyncTime();
         $isEnabled = $this->syncer->isEnabled();
 
@@ -100,6 +153,11 @@ class SyncController
      */
     public function setEnabled(Request $request, array $params): Response
     {
+        $authResponse = $this->requireAdmin();
+        if ($authResponse !== null) {
+            return $authResponse;
+        }
+
         $data = $request->body;
 
         if (!isset($data['enabled'])) {

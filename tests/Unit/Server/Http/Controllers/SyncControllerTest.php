@@ -65,7 +65,7 @@ final class SyncControllerTest extends TestCase
         self::assertSame(500, $response->statusCode);
         $body = $this->decodeBody($response->body);
         self::assertFalse($body['success']);
-        self::assertStringContainsString('Sync failed:', $body['error']);
+        self::assertSame('Sync failed', $body['error']);
     }
 
     public function test_getSyncStatus_returns_status_info(): void
