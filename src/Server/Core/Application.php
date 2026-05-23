@@ -1719,13 +1719,7 @@ class Application
      */
     private function getMusicController(): \Phlix\Server\Http\Controllers\MusicController
     {
-        $db = new \Workerman\MySQL\Connection(
-            '127.0.0.1',
-            3306,
-            'phlix',
-            'root',
-            'password'
-        );
+        $db = $this->createDatabaseConnection();
         $itemRepo = new \Phlix\Media\Library\ItemRepository($db);
         $libraryManager = new \Phlix\Media\Library\LibraryManager(
             $db,
@@ -1762,13 +1756,7 @@ class Application
      */
     private function getBookController(): \Phlix\Server\Http\Controllers\BookController
     {
-        $db = new \Workerman\MySQL\Connection(
-            '127.0.0.1',
-            3306,
-            'phlix',
-            'root',
-            'password'
-        );
+        $db = $this->createDatabaseConnection();
         $itemRepo = new \Phlix\Media\Library\ItemRepository($db);
         $libraryManager = new \Phlix\Media\Library\LibraryManager(
             $db,
@@ -1794,13 +1782,7 @@ class Application
      */
     private function getAudiobookController(): \Phlix\Server\Http\Controllers\AudiobookController
     {
-        $db = new \Workerman\MySQL\Connection(
-            '127.0.0.1',
-            3306,
-            'phlix',
-            'root',
-            'password'
-        );
+        $db = $this->createDatabaseConnection();
         $itemRepo = new \Phlix\Media\Library\ItemRepository($db);
         $audioScanner = new \Phlix\Media\Library\AudiobookScanner($db, $itemRepo);
         $progressStore = new \Phlix\Media\Library\AudiobookProgressStore($db);
@@ -1823,13 +1805,7 @@ class Application
      */
     private function getPhotoController(): \Phlix\Server\Http\Controllers\PhotoController
     {
-        $db = new \Workerman\MySQL\Connection(
-            '127.0.0.1',
-            3306,
-            'phlix',
-            'root',
-            'password'
-        );
+        $db = $this->createDatabaseConnection();
         $itemRepo = new \Phlix\Media\Library\ItemRepository($db);
         $photoScanner = new \Phlix\Media\Library\PhotoScanner($db, $itemRepo);
         $photoManager = new \Phlix\Media\Library\PhotoLibraryManager(
@@ -1843,5 +1819,46 @@ class Application
             $photoManager,
             $exifProvider
         );
+    }
+
+    /**
+     * Creates a database connection using config from the application.
+     *
+     * When a container is present, uses the connection pool which respects
+     * the database configuration. Falls back to Workerman\MySQL\Connection
+     * with default credentials when no container is available.
+     *
+     * @return \Workerman\MySQL\Connection The database connection
+     */
+    private function createDatabaseConnection(): \Workerman\MySQL\Connection
+    {
+        if ($this->container !== null) {
+            try {
+                return \Phlix\Common\Database\ConnectionPool::getConnection('mysql');
+            } catch (\Throwable) {
+                // Fall back to direct connection if pool not initialized
+            }
+        }
+
+        // Fallback for when container is not available (legacy test helpers)
+        $host = '127.0.0.1';
+        $port = 3306;
+        $user = 'root';
+        $password = '';
+        $database = 'phlix';
+
+        // Try to read from app config if available
+        if (isset($this->config['database'])) {
+            $dbConfig = $this->config['database'];
+            if (is_array($dbConfig)) {
+                $host = is_string($dbConfig['host'] ?? null) ? $dbConfig['host'] : $host;
+                $port = is_int($dbConfig['port'] ?? null) ? $dbConfig['port'] : $port;
+                $user = is_string($dbConfig['username'] ?? null) ? $dbConfig['username'] : $user;
+                $password = is_string($dbConfig['password'] ?? null) ? $dbConfig['password'] : $password;
+                $database = is_string($dbConfig['database'] ?? null) ? $dbConfig['database'] : $database;
+            }
+        }
+
+        return new \Workerman\MySQL\Connection($host, $port, $user, $password, $database);
     }
 }
