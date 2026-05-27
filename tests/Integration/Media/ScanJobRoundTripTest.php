@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phlix\Tests\Integration\Media;
 
+use Phlix\Common\Database\ConnectionPool;
 use Phlix\Media\Library\ScanJobRepository;
 use PHPUnit\Framework\TestCase;
 use Throwable;
@@ -49,14 +50,13 @@ final class ScanJobRoundTripTest extends TestCase
         }
 
         try {
-            $this->db = new Connection(
-                $host,
-                $port,
-                getenv('DB_USER') ?: 'root',
-                getenv('DB_PASSWORD') ?: 'root',
-                getenv('DB_DATABASE') ?: 'phlix_test',
-                'utf8mb4',
-            );
+            // Resolve the SAME patched connection production uses
+            // (PhlixMySQLConnection re-keys positional params 1-indexed for
+            // PDO::bindParam — the raw workerman/mysql Connection trips
+            // "bindParam(): Argument #1 must be >= 1" on PHP 8.x). Creds come
+            // from config/database.php, which reads the DB_* env phpunit.xml sets.
+            ConnectionPool::init(dirname(__DIR__, 3) . '/config/database.php');
+            $this->db = ConnectionPool::getConnection('mysql');
         } catch (Throwable $e) {
             $this->markTestSkipped('Could not connect to MySQL: ' . $e->getMessage());
         }
