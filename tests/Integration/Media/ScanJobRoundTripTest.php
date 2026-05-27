@@ -13,13 +13,18 @@ use Workerman\MySQL\Connection;
  * Real-DB round-trip for the library scan-job store (Step 1.1a).
  *
  * Drives a live {@see Connection} through the full job lifecycle —
- * enqueue → claimNext → updateProgress → markCompleted — asserting the row
- * transitions at each step. Mirrors the suite convention of
- * {@see \Phlix\Tests\Integration\Admin\ServerSettingsRoundTripTest} and the
- * MySQL-reachability self-skip used by the container BootstrapTest: it runs in
- * CI where a MySQL service exists and self-skips locally when no DB is
- * reachable (the Workerman Connection connects in its constructor, so there is
- * no test value in attempting it without a server).
+ * enqueue → claimNext → updateProgress → markCompleted → history — asserting
+ * the row transitions at each step. This exercises the REAL migration 027
+ * schema (the `library_scan_jobs` table, its FK to `libraries`, and the
+ * `LIMIT ?` bound history query) rather than a hand-rolled simulation.
+ *
+ * The CI PHPUnit job applies all migrations to the `phlix_test` MySQL service
+ * before the suite runs (see `.github/workflows/phpunit.yml`), so the schema
+ * exists here. Locally — where no MySQL is reachable — the test self-skips (the
+ * Workerman {@see Connection} connects in its constructor, so there is nothing
+ * to test without a server); the unit test
+ * {@see \Phlix\Tests\Unit\Media\Library\ScanJobRepositoryTest} covers every
+ * method with a mocked connection regardless.
  *
  * @covers \Phlix\Media\Library\ScanJobRepository
  */
@@ -39,7 +44,7 @@ final class ScanJobRoundTripTest extends TestCase
 
         if (!$this->isMysqlReachable($host, $port)) {
             $this->markTestSkipped(
-                sprintf('No MySQL on %s:%d — skipping scan-job round-trip. Run in docker-compose / CI.', $host, $port),
+                sprintf('No MySQL on %s:%d — skipping scan-job round-trip. Runs in CI / docker-compose.', $host, $port),
             );
         }
 
@@ -56,9 +61,8 @@ final class ScanJobRoundTripTest extends TestCase
             $this->markTestSkipped('Could not connect to MySQL: ' . $e->getMessage());
         }
 
-        $this->ensureSchema($this->db);
-
-        // A scan job FK-references libraries(id); create a disposable parent.
+        // A scan job FK-references libraries(id); create a disposable parent
+        // row in the migration-created (empty) `libraries` table.
         $this->libraryId = $this->uuid();
         $this->db->query(
             'INSERT INTO libraries (id, name, type, paths) VALUES (?, ?, ?, ?)',
@@ -80,7 +84,7 @@ final class ScanJobRoundTripTest extends TestCase
         $this->assertNotNull($this->db);
         $repo = new ScanJobRepository($this->db);
 
-        // Enqueue -> a queued row.
+        // enqueue -> a queued row.
         $jobId = $repo->enqueue($this->libraryId, 'scan');
         $this->assertNotSame('', $jobId);
 
@@ -129,31 +133,10 @@ final class ScanJobRoundTripTest extends TestCase
         $this->assertSame(6, $completed['items_found']);
         $this->assertNotNull($completed['completed_at']);
 
-        // History returns the job for the library.
+        // History returns the job for the library (LIMIT ? bound query).
         $history = $repo->getHistoryForLibrary($this->libraryId, 10);
         $this->assertNotEmpty($history);
         $this->assertSame($jobId, $history[0]['id']);
-    }
-
-    /**
-     * Apply migration 027 (idempotent) so the table exists when the test DB
-     * was not migrated by the runner.
-     */
-    private function ensureSchema(Connection $db): void
-    {
-        $sql = (string) file_get_contents(dirname(__DIR__, 3) . '/migrations/027_library_scan_jobs.sql');
-        // Strip leading `--` comment lines, then run the single CREATE statement.
-        $statement = '';
-        foreach (explode("\n", $sql) as $line) {
-            if (str_starts_with(trim($line), '--')) {
-                continue;
-            }
-            $statement .= $line . "\n";
-        }
-        $statement = trim($statement);
-        if ($statement !== '') {
-            $db->query($statement);
-        }
     }
 
     private function isMysqlReachable(string $host, int $port): bool
@@ -163,6 +146,7 @@ final class ScanJobRoundTripTest extends TestCase
             return false;
         }
         fclose($sock);
+
         return true;
     }
 
