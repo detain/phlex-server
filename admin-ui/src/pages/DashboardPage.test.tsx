@@ -102,11 +102,6 @@ describe('DashboardPage', () => {
       { status: 200, body: { success: true, data: activityData } },
       { status: 200, body: { success: true, data: topUsers } },
       { status: 200, body: { success: true, data: topMedia } },
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
     ]);
 
     await waitFor(() => {
@@ -125,11 +120,6 @@ describe('DashboardPage', () => {
       { status: 200, body: { success: true, data: activityData } },
       { status: 200, body: { success: true, data: topUsers } },
       { status: 200, body: { success: true, data: topMedia } },
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
     ]);
 
     await waitFor(() => {
@@ -141,11 +131,6 @@ describe('DashboardPage', () => {
 
   it('renders Top Users leaderboard table with formatted watch time', async () => {
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
@@ -168,11 +153,6 @@ describe('DashboardPage', () => {
       { status: 200, body: { success: true, data: activityData } },
       { status: 200, body: { success: true, data: topUsers } },
       { status: 200, body: { success: true, data: topMedia } },
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
     ]);
 
     await waitFor(() => {
@@ -184,11 +164,6 @@ describe('DashboardPage', () => {
 
   it('renders Storage cards with item count and human-readable size', async () => {
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
@@ -208,11 +183,6 @@ describe('DashboardPage', () => {
 
   it('renders Activity Feed with event badges, user, title, and relative time', async () => {
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
@@ -239,11 +209,6 @@ describe('DashboardPage', () => {
       { status: 200, body: { success: true, data: activityData } },
       { status: 200, body: { success: true, data: topUsers } },
       { status: 200, body: { success: true, data: topMedia } },
-      { status: 200, body: { success: true, data: [] } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
     ]);
 
     await waitFor(() => {
@@ -254,11 +219,6 @@ describe('DashboardPage', () => {
 
   it('shows empty state for Top Users when no data', async () => {
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: [] } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
@@ -278,11 +238,6 @@ describe('DashboardPage', () => {
       { status: 200, body: { success: true, data: activityData } },
       { status: 200, body: { success: true, data: topUsers } },
       { status: 200, body: { success: true, data: [] } },
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: [] } },
     ]);
 
     await waitFor(() => {
@@ -292,11 +247,6 @@ describe('DashboardPage', () => {
 
   it('shows empty state for Storage when no data', async () => {
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: [] } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: [] } },
       { status: 200, body: { success: true, data: activityData } },
@@ -316,11 +266,6 @@ describe('DashboardPage', () => {
       { status: 200, body: { success: true, data: [] } },
       { status: 200, body: { success: true, data: topUsers } },
       { status: 200, body: { success: true, data: topMedia } },
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: [] } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
     ]);
 
     await waitFor(() => {
@@ -335,11 +280,6 @@ describe('DashboardPage', () => {
   it('changes Top Users + Top Media + Activity when date range changes', async () => {
     const user = userEvent.setup();
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
@@ -369,11 +309,6 @@ describe('DashboardPage', () => {
 
   it('starts auto-refresh interval on mount and clears on unmount', () => {
     const client = makeClient([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
@@ -441,11 +376,6 @@ describe('DashboardPage', () => {
 
   it('hides Load more button when activity returns fewer than page size', async () => {
     renderDashboard([
-      { status: 200, body: { success: true, data: nowPlayingItems } },
-      { status: 200, body: { success: true, data: storageData } },
-      { status: 200, body: { success: true, data: activityData } },
-      { status: 200, body: { success: true, data: topUsers } },
-      { status: 200, body: { success: true, data: topMedia } },
       { status: 200, body: { success: true, data: nowPlayingItems } },
       { status: 200, body: { success: true, data: storageData } },
       { status: 200, body: { success: true, data: activityData } },
