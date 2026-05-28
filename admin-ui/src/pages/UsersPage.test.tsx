@@ -298,7 +298,7 @@ describe('UsersPage', () => {
     await user.click(screen.getByRole('button', { name: 'Manage profiles for alice' }));
 
     const dialog = await screen.findByRole('dialog', { name: /profiles/i });
-    await user.click(within(dialog).getByRole('button', { name: 'Edit Adult' }));
+    await user.click(within(dialog).getByRole('button', { name: /Edit Adult/ }));
 
     await user.clear(screen.getByLabelText(/^Name/));
     await user.type(screen.getByLabelText(/^Name/), 'Adult Restricted');
@@ -323,7 +323,7 @@ describe('UsersPage', () => {
     await user.click(screen.getByRole('button', { name: 'Manage profiles for alice' }));
 
     const dialog = await screen.findByRole('dialog', { name: /profiles/i });
-    await user.click(within(dialog).getByRole('button', { name: 'Delete Adult' }));
+    await user.click(within(dialog).getByRole('button', { name: /Delete profile Adult/ }));
 
     await user.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
@@ -334,7 +334,7 @@ describe('UsersPage', () => {
 
   it('profiles modal: max 5 guard shows error toast when adding 6th', async () => {
     const user = userEvent.setup();
-    const fiveProfiles = Array.from({ length: 5 }, (_, i) => ({
+    const fiveProfiles = Array.from({ length: 4 }, (_, i) => ({
       id: i + 1,
       user_id: 1,
       name: `Profile ${i + 1}`,
@@ -354,6 +354,9 @@ describe('UsersPage', () => {
     const dialog = await screen.findByRole('dialog', { name: /profiles/i });
     await user.click(within(dialog).getByRole('button', { name: /add profile/i }));
 
+    await waitFor(() => {
+      expect(screen.getByLabelText(/^Name/)).toBeInTheDocument();
+    });
     await user.type(screen.getByLabelText(/^Name/), 'TooMany');
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
