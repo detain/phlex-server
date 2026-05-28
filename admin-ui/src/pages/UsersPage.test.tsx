@@ -298,11 +298,11 @@ describe('UsersPage', () => {
     await user.click(screen.getByRole('button', { name: 'Manage profiles for alice' }));
 
     const dialog = await screen.findByRole('dialog', { name: /profiles/i });
-    await user.click(within(dialog).getByRole('button', { name: /Edit Adult/ }));
+    await user.click(within(dialog).getByRole('button', { name: 'Edit profile Adult' }));
 
-    await user.clear(screen.getByLabelText(/^Name/));
-    await user.type(screen.getByLabelText(/^Name/), 'Adult Restricted');
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.clear(within(dialog).getByLabelText(/^Name/));
+    await user.type(within(dialog).getByLabelText(/^Name/), 'Adult Restricted');
+    await user.click(within(dialog).getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       expect(within(dialog).getByText('Adult Restricted')).toBeInTheDocument();
@@ -323,7 +323,7 @@ describe('UsersPage', () => {
     await user.click(screen.getByRole('button', { name: 'Manage profiles for alice' }));
 
     const dialog = await screen.findByRole('dialog', { name: /profiles/i });
-    await user.click(within(dialog).getByRole('button', { name: /Delete profile Adult/ }));
+    await user.click(within(dialog).getByRole('button', { name: 'Delete profile Adult' }));
 
     await user.click(within(dialog).getByRole('button', { name: 'Delete' }));
 
